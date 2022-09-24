@@ -6,7 +6,7 @@
 #    By: chillion <chillion@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/09/01 12:07:22 by chillion          #+#    #+#              #
-#    Updated: 2022/09/19 11:23:27 by chillion         ###   ########.fr        #
+#    Updated: 2022/09/24 14:20:00 by chillion         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -36,18 +36,9 @@ MAGENTA = \033[0;35m
 CYAN = \033[0;36m
 NC = \033[0m
 
-#SRCS = push_swap.c	\
-	push_swap_tools_sp.c	\
-	push_swap_tools_r.c	\
-	push_swap_tools_rr.c	\
-	push_swap_tools.c	\
-	push_swap_check.c	\
-	push_swap_pos.c	\
-	push_swap_pull.c	\
-	push_swap_switch.c	\
-	push_swap_cost.c	\
+SRCS = so_long.c	\
 
-SRCS = ${wildcard *.c}
+#SRCS = ${wildcard *.c}
 
 BONUS = checker.c	\
 	checker_tools.c	\

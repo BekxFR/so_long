@@ -6,7 +6,7 @@
 /*   By: chillion <chillion@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/09 10:56:42 by chillion          #+#    #+#             */
-/*   Updated: 2022/09/23 15:04:23 by chillion         ###   ########.fr       */
+/*   Updated: 2022/09/24 17:56:54 by chillion         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,10 +27,10 @@ typedef struct s_data {
 typedef struct s_map
 {
 	char	**map;
-	char	**map2;
 	int		height;
 	int		width;
 	int		items;
+	int		items_find;
 }	t_map;
 
 typedef struct s_vars
@@ -38,14 +38,11 @@ typedef struct s_vars
 	void	*mlx;
 	void	*win;
 	t_data	img;
-	t_data	pix;
-	t_data	tmp;
-	t_map	*map;
+	t_map	map;
 }	t_vars;
 
 void	ft_stop_all(t_vars *vars)
 {
-	mlx_destroy_image(vars->mlx, vars->pix.img);
 	mlx_destroy_image(vars->mlx, vars->img.img);
 	mlx_destroy_window(vars->mlx, vars->win);
 	mlx_destroy_display(vars->mlx);
@@ -68,8 +65,8 @@ void	my_mlx_pixel_put(t_data *data, int x, int y, int color)
 
 void	ft_draw_circle(t_vars *vars)
 {
-	vars->tmp.img = mlx_new_image(vars->mlx, 40, 40);
-	vars->tmp.addr = mlx_get_data_addr(vars->tmp.img, &vars->tmp.bits_per_pixel, &vars->tmp.line_length, &vars->tmp.endian);
+	vars->img.img = mlx_new_image(vars->mlx, 40, 40);
+	vars->img.addr = mlx_get_data_addr(vars->img.img, &vars->img.bits_per_pixel, &vars->img.line_length, &vars->img.endian);
 	int r = 20;
 	int N = 2*r+1;
     int x, y;
@@ -81,12 +78,12 @@ void	ft_draw_circle(t_vars *vars)
             y = j-r;
  
             if (x*x + y*y <= r*r+1 )
-                my_mlx_pixel_put(&vars->tmp, i, j, 0xFFFFFF00);
+                my_mlx_pixel_put(&vars->img, i, j, 0xFFFFFF00);
         }
     }
-	my_mlx_pixel_put(&vars->tmp, 0, 20, 0xFFFFFF00);
-	mlx_put_image_to_window(vars->mlx, vars->win, vars->tmp.img, 380, 230);
-	mlx_destroy_image(vars->mlx, vars->tmp.img);
+	my_mlx_pixel_put(&vars->img, 0, 20, 0xFFFFFF00);
+	mlx_put_image_to_window(vars->mlx, vars->win, vars->img.img, 380, 230);
+	mlx_destroy_image(vars->mlx, vars->img.img);
 }
 
 int ft_rgb_to_int(int t, int r, int g, int b)
@@ -106,13 +103,13 @@ void ft_font_rainbow(t_vars *vars)
 	int j = 0;
 	int x = 0;
 
-	vars->tmp.img = mlx_new_image(vars->mlx, HEIGHT, WIDTH);
-	vars->tmp.addr = mlx_get_data_addr(vars->tmp.img, &vars->tmp.bits_per_pixel, &vars->tmp.line_length, &vars->tmp.endian);
+	vars->img.img = mlx_new_image(vars->mlx, HEIGHT, WIDTH);
+	vars->img.addr = mlx_get_data_addr(vars->img.img, &vars->img.bits_per_pixel, &vars->img.line_length, &vars->img.endian);
 	while(i < HEIGHT)
 	{
 		while (j < WIDTH)
 		{
-			my_mlx_pixel_put(&vars->tmp, i, j, ft_rgb_to_int(0, color1, color2, color3));
+			my_mlx_pixel_put(&vars->img, i, j, ft_rgb_to_int(0, color1, color2, color3));
 			if (j %250 == 0)
 			{
 				if (color3 != 0 && x == 0)
@@ -145,8 +142,8 @@ void ft_font_rainbow(t_vars *vars)
 		j = 0;
 		i++;
 	}
-	mlx_put_image_to_window(vars->mlx, vars->win, vars->tmp.img, 0, 0);
-	mlx_destroy_image(vars->mlx, vars->tmp.img);
+	mlx_put_image_to_window(vars->mlx, vars->win, vars->img.img, 0, 0);
+	mlx_destroy_image(vars->mlx, vars->img.img);
 }
 
 int ft_render_next_frame(t_vars *vars)
@@ -154,8 +151,8 @@ int ft_render_next_frame(t_vars *vars)
 	int i = 0, j = 0;
 	static int x = 0;
 	static int color1 = 255, color2 = 0, color3 = 255;
-	vars->tmp.img = mlx_new_image(vars->mlx, HEIGHT, WIDTH);
-	vars->tmp.addr = mlx_get_data_addr(vars->tmp.img, &vars->tmp.bits_per_pixel, &vars->tmp.line_length, &vars->tmp.endian);
+	vars->img.img = mlx_new_image(vars->mlx, HEIGHT, WIDTH);
+	vars->img.addr = mlx_get_data_addr(vars->img.img, &vars->img.bits_per_pixel, &vars->img.line_length, &vars->img.endian);
 	if (color3 != 0 && x == 0)
 	{
 		color3--;
@@ -184,14 +181,14 @@ int ft_render_next_frame(t_vars *vars)
 	{
 		while (j < WIDTH)
 		{
-			my_mlx_pixel_put(&vars->tmp, i, j, ft_rgb_to_int(0, color1, color2, color3));
+			my_mlx_pixel_put(&vars->img, i, j, ft_rgb_to_int(0, color1, color2, color3));
 			j++;
 		}
 		j = 0;
 		i++;
 	}
-	mlx_put_image_to_window(vars->mlx, vars->win, vars->tmp.img, 0, 0);
-	mlx_destroy_image(vars->mlx, vars->tmp.img);
+	mlx_put_image_to_window(vars->mlx, vars->win, vars->img.img, 0, 0);
+	mlx_destroy_image(vars->mlx, vars->img.img);
 	return (1);
 }
 
@@ -206,17 +203,17 @@ void	ft_draw_line(t_vars *vars, int beginx, int beginy, int endx, int endy, int 
 	deltax /= pixels;
 	deltay /= pixels;
 
-	vars->tmp.img = mlx_new_image(vars->mlx, 800, 500); // DRAW 1 IMAGE With FULL LiNE
-	vars->tmp.addr = mlx_get_data_addr(vars->tmp.img, &vars->tmp.bits_per_pixel, &vars->tmp.line_length, &vars->tmp.endian);
+	vars->img.img = mlx_new_image(vars->mlx, 800, 500); // DRAW 1 IMAGE With FULL LiNE
+	vars->img.addr = mlx_get_data_addr(vars->img.img, &vars->img.bits_per_pixel, &vars->img.line_length, &vars->img.endian);
 	while (pixels)
 	{
-		my_mlx_pixel_put(&vars->tmp, pixelx, pixely, color);
+		my_mlx_pixel_put(&vars->img, pixelx, pixely, color);
 		pixelx += deltax;
 		pixely += deltay;
 		--pixels;
 	}
-	mlx_put_image_to_window(vars->mlx, vars->win, vars->tmp.img, 0, 0);
-	mlx_destroy_image(vars->mlx, vars->tmp.img);
+	mlx_put_image_to_window(vars->mlx, vars->win, vars->img.img, 0, 0);
+	mlx_destroy_image(vars->mlx, vars->img.img);
 }
 
 void ft_draw_img_tmp(t_vars *vars, int pos)
@@ -225,50 +222,50 @@ void ft_draw_img_tmp(t_vars *vars, int pos)
 	int j;
 
 	ft_printf("POS :%d\n", pos);
-	vars->tmp.img = mlx_new_image(vars->mlx, 800, 25);
-	vars->tmp.addr = mlx_get_data_addr(vars->tmp.img, &vars->tmp.bits_per_pixel, &vars->tmp.line_length, &vars->tmp.endian);
+	vars->img.img = mlx_new_image(vars->mlx, 800, 25);
+	vars->img.addr = mlx_get_data_addr(vars->img.img, &vars->img.bits_per_pixel, &vars->img.line_length, &vars->img.endian);
 	j = 0;
 	while (j <= 25)
 	{
 		i = 0;
 		while (i <= 400)
 		{
-			my_mlx_pixel_put(&vars->tmp, i, j, 0xFFFFFF00);
+			my_mlx_pixel_put(&vars->img, i, j, 0xFFFFFF00);
 			i++;
 		}
 		while (i >= 401 && i <= 800)
 		{
-			my_mlx_pixel_put(&vars->tmp, i, j, 0xFFFF00FF);
+			my_mlx_pixel_put(&vars->img, i, j, 0xFFFF00FF);
 			i++;
 		}
 		j++;
 	}
-	mlx_put_image_to_window(vars->mlx, vars->win, vars->tmp.img, 0, pos);
-	mlx_destroy_image(vars->mlx, vars->tmp.img);
+	mlx_put_image_to_window(vars->mlx, vars->win, vars->img.img, 0, pos);
+	mlx_destroy_image(vars->mlx, vars->img.img);
 }
 
 void	ft_move_img(t_vars *vars, int key)
 {
 	int	i;
 	
-	ft_printf("vars->pix.pos :%d\n", vars->pix.pos);
+	ft_printf("vars->img.pos :%d\n", vars->img.pos);
 	if (key == 65364)
 	{
-		if (vars->pix.pos <= 475){
-			vars->pix.pos = vars->pix.pos + 25;
-			i = vars->pix.pos;
-			if (vars->pix.pos <=500)
-				mlx_put_image_to_window(vars->mlx, vars->win, vars->pix.img, 0, i);
+		if (vars->img.pos <= 475){
+			vars->img.pos = vars->img.pos + 25;
+			i = vars->img.pos;
+			if (vars->img.pos <=500)
+				mlx_put_image_to_window(vars->mlx, vars->win, vars->img.img, 0, i);
 		}
 	}
 	if (key == 65362)
 	{
-		if (vars->pix.pos >= 25)
+		if (vars->img.pos >= 25)
 		{
-			vars->pix.pos = vars->pix.pos - 25;
-			i = vars->pix.pos;
-			if (vars->pix.pos >= 0)
-				ft_draw_img_tmp(vars, vars->pix.pos);
+			vars->img.pos = vars->img.pos - 25;
+			i = vars->img.pos;
+			if (vars->img.pos >= 0)
+				ft_draw_img_tmp(vars, vars->img.pos);
 		}
 	}
 }
@@ -300,17 +297,17 @@ void ft_draw_img_test(t_vars *vars)
 		i = 0;
 		while (i <= 400)
 		{
-			my_mlx_pixel_put(&vars->pix, i, j, 0xFFFF00FF);
+			my_mlx_pixel_put(&vars->img, i, j, 0xFFFF00FF);
 			i++;
 		}
 		while (i >= 401 && i <= 800)
 		{
-			my_mlx_pixel_put(&vars->pix, i, j, 0xFFFFFF00);
+			my_mlx_pixel_put(&vars->img, i, j, 0xFFFFFF00);
 			i++;
 		}
 		j++;
 	}
-	mlx_put_image_to_window(vars->mlx, vars->win, vars->pix.img, 0, 0);
+	mlx_put_image_to_window(vars->mlx, vars->win, vars->img.img, 0, 0);
 }
 
 /* int	main(void)
@@ -354,7 +351,7 @@ void ft_draw_img_test(t_vars *vars)
 	return (0);
 } */
 
-char **ft_init_map(char *argv, t_map map)
+char **ft_init_map(char *argv, t_vars *vars)
 {
 	int	fd;
 	int	i;
@@ -366,48 +363,53 @@ char **ft_init_map(char *argv, t_map map)
 		exit(EXIT_FAILURE);
 	}
 	i = 0;
-	map.map = (char **)malloc(sizeof(char *) * 100);
-	if (!map.map)
+	vars->map.map = (char **)malloc(sizeof(char *) * 100);
+	if (!vars->map.map)
 		return (0);
-	map.map[i] = get_next_line(fd);
-	while (map.map[i])
+	vars->map.map[i] = get_next_line(fd);
+	while (vars->map.map[i])
 	{
 		i++;
-		map.map[i] = get_next_line(fd);
+		vars->map.map[i] = get_next_line(fd);
 	}
 	fd = close(fd);
-	return (map.map);
+	return (vars->map.map);
 }
 
-void	ft_clean_map(t_map map, int i)
+void	ft_clean_map(t_vars *vars, int i)
 {
-	while (--i >= 0)
-		ft_free(&map.map[i]);
-	free(map.map);
+	i = 0;
+	while (vars->map.map[i])
+	{
+		ft_free(&vars->map.map[i]);
+		i++;
+	}
+	free(vars->map.map);
 }
 
-void	ft_exit_map(t_map map, int i)
+void	ft_exit_map(t_vars *vars, int i)
 {
-	ft_clean_map(map, i);
+	ft_clean_map(vars, i);
+	free(vars);
 	exit(EXIT_FAILURE);
 }
 
-int	ft_map_height(t_map map)
+int	ft_map_height(t_vars *vars)
 {
 	int	height;
 
 	height = 0;
-	while (map.map[0][height])
+	while (vars->map.map[0][height])
 		height++;
 	return (height);
 }
 
-int	ft_map_width(t_map map)
+int	ft_map_width(t_vars *vars)
 {
 	int	width;
 
 	width = 0;
-	while (map.map[width])
+	while (vars->map.map[width])
 		width++;
 	return (width);
 }
@@ -424,125 +426,142 @@ void	ft_print_map(char **mptr)
 	}
 }
 
-int	ft_west_offensive(int x, int y, int items, t_map map)
+int	ft_west_offensive(int x, int y, t_vars *vars)
 {
 	int	tmpx;
 	int	tmpy;
 
 	tmpy = y;
 	tmpx = x;
-	while (map.map[tmpy][tmpx] != '1')
+	while (vars->map.map[tmpy][tmpx] != '1')
 	{
-		if (map.map[tmpy][tmpx] == 'C' || map.map[tmpy][tmpx] == 'E')
-			items = items + 1;
-		if (map.map[tmpy][tmpx] != '1')
-			map.map[tmpy][tmpx] = 'P';
-		if (map.map[tmpy - 1][tmpx] != '1')
-			map.map[tmpy - 1][tmpx] = 'P';
-		if (map.map[tmpy + 1][tmpx] != '1')
-			map.map[tmpy + 1][tmpx] = 'P';
+		if (vars->map.map[tmpy][tmpx] == 'C' || vars->map.map[tmpy][tmpx] == 'E')
+			vars->map.items_find = vars->map.items_find + 1;
+		if (vars->map.map[tmpy - 1][tmpx] == 'C' || vars->map.map[tmpy - 1][tmpx] == 'E')
+			vars->map.items_find = vars->map.items_find + 1;
+		if (vars->map.map[tmpy + 1][tmpx] == 'C' || vars->map.map[tmpy + 1][tmpx] == 'E')
+			vars->map.items_find = vars->map.items_find + 1;
+		if (vars->map.map[tmpy][tmpx] != '1')
+			vars->map.map[tmpy][tmpx] = 'P';
+		if (vars->map.map[tmpy - 1][tmpx] != '1')
+			vars->map.map[tmpy - 1][tmpx] = 'P';
+		if (vars->map.map[tmpy + 1][tmpx] != '1')
+			vars->map.map[tmpy + 1][tmpx] = 'P';
 		tmpx--;
 	}
-	return (items);
+	return (vars->map.items_find);
 }
 
-int	ft_north_offensive(int x, int y, int items, t_map map)
+int	ft_north_offensive(int x, int y, t_vars *vars)
 {
 	int	tmpx;
 	int	tmpy;
 
 	tmpy = y;
 	tmpx = x;
-	while (map.map[tmpy][tmpx] != '1')
+	while (vars->map.map[tmpy][tmpx] != '1')
 	{
-		if (map.map[tmpy][tmpx] == 'C' || map.map[tmpy][tmpx] == 'E')
-			items = items + 1;
-		if (map.map[tmpy][tmpx] != '1')
-			map.map[tmpy][tmpx] = 'P';
-		if (map.map[tmpy][tmpx - 1] != '1')
-			map.map[tmpy][tmpx - 1] = 'P';
-		if (map.map[tmpy][tmpx + 1] != '1')
-			map.map[tmpy][tmpx + 1] = 'P';
+		if (vars->map.map[tmpy][tmpx] == 'C' || vars->map.map[tmpy][tmpx] == 'E')
+			vars->map.items_find = vars->map.items_find + 1;
+		if (vars->map.map[tmpy][tmpx - 1] == 'C' || vars->map.map[tmpy][tmpx - 1] == 'E')
+			vars->map.items_find = vars->map.items_find + 1;
+		if (vars->map.map[tmpy][tmpx + 1] == 'C' || vars->map.map[tmpy][tmpx + 1] == 'E')
+			vars->map.items_find = vars->map.items_find + 1;
+		if (vars->map.map[tmpy][tmpx] != '1')
+			vars->map.map[tmpy][tmpx] = 'P';
+		if (vars->map.map[tmpy][tmpx - 1] != '1')
+			vars->map.map[tmpy][tmpx - 1] = 'P';
+		if (vars->map.map[tmpy][tmpx + 1] != '1')
+			vars->map.map[tmpy][tmpx + 1] = 'P';
 		tmpy--;
 	}
-	return (items);
+	return (vars->map.items_find);
 }
 
-int	ft_east_offensive(int x, int y, int items, t_map map)
+int	ft_east_offensive(int x, int y, t_vars *vars)
 {
 	int	tmpx;
 	int	tmpy;
 
 	tmpy = y;
 	tmpx = x;
-	while (map.map[tmpy][tmpx] != '1')
+	while (vars->map.map[tmpy][tmpx] != '1')
 	{
-		if (map.map[tmpy][tmpx] == 'C' || map.map[tmpy][tmpx] == 'E')
-			items = items + 1;
-		if (map.map[tmpy][tmpx] != '1')
-			map.map[tmpy][tmpx] = 'P';
-		if (map.map[tmpy - 1][tmpx] != '1')
-			map.map[tmpy - 1][tmpx] = 'P';
-		if (map.map[tmpy + 1][tmpx] != '1')
-			map.map[tmpy + 1][tmpx] = 'P';
+		if (vars->map.map[tmpy][tmpx] == 'C' || vars->map.map[tmpy][tmpx] == 'E')
+			vars->map.items_find = vars->map.items_find + 1;
+		if (vars->map.map[tmpy - 1][tmpx] == 'C' || vars->map.map[tmpy - 1][tmpx] == 'E')
+			vars->map.items_find = vars->map.items_find + 1;
+		if (vars->map.map[tmpy + 1][tmpx] == 'C' || vars->map.map[tmpy + 1][tmpx] == 'E')
+			vars->map.items_find = vars->map.items_find + 1;
+		if (vars->map.map[tmpy][tmpx] != '1')
+			vars->map.map[tmpy][tmpx] = 'P';
+		if (vars->map.map[tmpy - 1][tmpx] != '1')
+			vars->map.map[tmpy - 1][tmpx] = 'P';
+		if (vars->map.map[tmpy + 1][tmpx] != '1')
+			vars->map.map[tmpy + 1][tmpx] = 'P';
 		tmpx++;
 	}
-	return (items);
+	return (vars->map.items_find);
 }
 
-int	ft_south_offensive(int x, int y, int items, t_map map)
+int	ft_south_offensive(int x, int y, t_vars *vars)
 {
 	int	tmpx;
 	int	tmpy;
 
 	tmpy = y;
 	tmpx = x;
-	while (map.map[tmpy][tmpx] != '1')
+	while (vars->map.map[tmpy][tmpx] != '1')
 	{
-		if (map.map[tmpy][tmpx] == 'C' || map.map[tmpy][tmpx] == 'E')
-			items = items + 1;
-		if (map.map[tmpy][tmpx] != '1')
-			map.map[tmpy][tmpx] = 'P';
-		if (map.map[tmpy][tmpx - 1] != '1')
-			map.map[tmpy][tmpx - 1] = 'P';
-		if (map.map[tmpy][tmpx + 1] != '1')
-			map.map[tmpy][tmpx + 1] = 'P';
+		if (vars->map.map[tmpy][tmpx] == 'C' || vars->map.map[tmpy][tmpx] == 'E')
+			vars->map.items_find = vars->map.items_find + 1;
+		if (vars->map.map[tmpy][tmpx - 1] == 'C' || vars->map.map[tmpy][tmpx - 1] == 'E')
+			vars->map.items_find = vars->map.items_find + 1;
+		if (vars->map.map[tmpy][tmpx + 1] == 'C' || vars->map.map[tmpy][tmpx + 1] == 'E')
+			vars->map.items_find = vars->map.items_find + 1;
+		if (vars->map.map[tmpy][tmpx] != '1')
+			vars->map.map[tmpy][tmpx] = 'P';
+		if (vars->map.map[tmpy][tmpx - 1] != '1')
+			vars->map.map[tmpy][tmpx - 1] = 'P';
+		if (vars->map.map[tmpy][tmpx + 1] != '1')
+			vars->map.map[tmpy][tmpx + 1] = 'P';
 		tmpy++;
 	}
-	return (items);
+	return (vars->map.items_find);
 }
 
-int	ft_invasion_propagation(int x, int y, t_map map)
+int	ft_invasion_propagation(int x, int y, t_vars *vars)
 {
-	int	items;
-	
-	items = 1;
-	
-	items = ft_west_offensive(x, y, items, map);
-	items = ft_north_offensive(x, y, items, map);
-	items = ft_east_offensive(x, y, items, map);
-	items = ft_south_offensive(x, y, items, map);
-//=	ft_print_map(map.map);
-/* 	if (items == map.items)
-		return (0); */
-	return (items);
+	ft_west_offensive(x, y, vars);
+	if (vars->map.items_find == vars->map.items)
+		return (vars->map.items_find);
+	ft_north_offensive(x, y, vars);
+	if (vars->map.items_find == vars->map.items)
+		return (vars->map.items);
+	ft_east_offensive(x, y, vars);
+	if (vars->map.items_find == vars->map.items)
+		return (vars->map.items);
+	ft_south_offensive(x, y, vars);
+	if (vars->map.items_find == vars->map.items)
+		return (vars->map.items);
+	return (vars->map.items_find);
 }
 
-int	ft_invasion_checker(t_map map)
+int	ft_invasion_checker(t_vars *vars)
 {
 	int	x;
 	int	y;
 	
 	y = 1;
-	while (y < map.width - 1)
+	while (y < vars->map.width - 1)
 	{
 		x = 1;
-		while (x < map.height - 2)
+		while (x < vars->map.height - 2)
 		{
-			if (map.map[y][x] == 'P')
+			if (vars->map.map[y][x] == 'P')
 			{
-				if(map.map[y][x - 1] == '0' || map.map[y][x + 1] == '0' || map.map[y - 1][x] == '0' || map.map[y + 1][x] == '0'
-				|| map.map[y][x - 1] == 'C' || map.map[y][x + 1] == 'C' || map.map[y - 1][x] == 'C' || map.map[y + 1][x] == 'C')
+				if(vars->map.map[y][x - 1] == '0' || vars->map.map[y][x + 1] == '0' || vars->map.map[y - 1][x] == '0' || vars->map.map[y + 1][x] == '0'
+				|| vars->map.map[y][x - 1] == 'C' || vars->map.map[y][x + 1] == 'C' || vars->map.map[y - 1][x] == 'C' || vars->map.map[y + 1][x] == 'C')
 					return (1);
 			}
 			x++;
@@ -552,44 +571,47 @@ int	ft_invasion_checker(t_map map)
 	return (0);
 }
 
-void	ft_invasion_loop(t_map *map)
+int	ft_invasion_loop(t_vars *vars)
 {
 	int	x;
 	int	y;
-	
-	map->height = ft_map_height(*map);
-	map->width = ft_map_width(*map);
+
 	y = 1;
-	while (y < map->width - 1)
+	while (y < vars->map.width - 1)
 	{
 		x = 1;
-		while (x < map->height - 2)
+		while (x < vars->map.height - 2)
 		{
-			if (map->map[y][x] == 'P')
+			if (vars->map.map[y][x] == 'P' && vars->map.items_find != vars->map.items)
 			{
-				if(map->map[y][x - 1] == '0' || map->map[y][x + 1] == '0' || map->map[y - 1][x] == '0' || map->map[y + 1][x] == '0'
-				|| map->map[y][x - 1] == 'C' || map->map[y][x + 1] == 'C' || map->map[y - 1][x] == 'C' || map->map[y + 1][x] == 'C')
-					ft_invasion_propagation(x, y, *map);
+				if(vars->map.map[y][x - 1] == '0' || vars->map.map[y][x + 1] == '0' || vars->map.map[y - 1][x] == '0' || vars->map.map[y + 1][x] == '0'
+				|| vars->map.map[y][x - 1] == 'C' || vars->map.map[y][x + 1] == 'C' || vars->map.map[y - 1][x] == 'C' || vars->map.map[y + 1][x] == 'C')
+					vars->map.items_find = ft_invasion_propagation(x, y, vars);
 			}
 			x++;
 		}
 		y++;
 	}
-	if (ft_invasion_checker(*map) != 0)
-		return (ft_invasion_loop(map));
+	if (ft_invasion_checker(vars) != 0 && vars->map.items_find != vars->map.items)
+		return (ft_invasion_loop(vars));
+	if (vars->map.items_find != vars->map.items)
+		ft_printf("Error\nNO VALABLE PATH - ALL ITEMS CANT BE FIND BY PLAYER\n");
+	return (vars->map.items_find);
 }
 
-int	ft_ctrl_map_size(t_map *map, int i)
+int	ft_ctrl_map_size(t_vars *vars, int i)
 {
 	int	width;
 	int	dif;
 	int	line_size;
 
+	vars->map.height = ft_map_height(vars);
+	vars->map.width = ft_map_width(vars);
 	dif = 0;
-	while (map->map[i])
+	while (vars->map.map[i])
 	{
 		width = 0;
-		while (map->map[i][width])
+		while (vars->map.map[i][width])
 			width++;
 		if (i == 0)
 			line_size = width;
@@ -600,13 +622,13 @@ int	ft_ctrl_map_size(t_map *map, int i)
 	if (dif != 0 || i == width - 1 || i < 3)
 	{
 		errno = 22;
-		perror("Error\nTAILLE DE LA MAP ");
-		ft_exit_map(*map, i);
+		perror("Error\nMAP SIZE NOT CORRECT ");
+		ft_exit_map(vars, i);
 	}
 	return (i);
 }
 
-int	ft_map_control(t_map *map, int i)
+int	ft_contour_map_control(t_vars *vars, int i)
 {
 	int	j;
 	int	k;
@@ -615,27 +637,54 @@ int	ft_map_control(t_map *map, int i)
 
 	j = 0;
 	error = 0;
-	while (map->map[j])
+	while (vars->map.map[j])
 	{
 		k = 0;
-		while (map->map[j][k + 1])
+		while (vars->map.map[j][k + 1])
 		{
-			if (map->map[0][k] != '1' || map->map[i - 1][k] != '1' || map->map[j][0] != '1')
+			if (vars->map.map[0][k] != '1' || vars->map.map[i - 1][k] != '1' || vars->map.map[j][0] != '1')
 				error += 1;
 			if (j == 0)
 				len = k;
-			if (j != 0 && map->map[j][len] != '1')
+			if (vars->map.map[j][len] != '1')
 				error += 1;
 			k++;
 		}
 		j++;
 	}
 	if (error != 0)
-		ft_printf("Error\nFORMAT DE LA MAP : %s\n", strerror(22));
+		ft_printf("Error\nMAP NOT ENCLOSE BY WALLS : %s\n", strerror(22));
 	return (error);
 }
 
-int	ft_control_item(t_map *map, char c)
+int	ft_elements_map_control(t_vars *vars)
+{
+	int	j;
+	int	k;
+	char	error;
+
+	j = 1;
+	error = 0;
+	while (vars->map.map[j + 1])
+	{
+		k = 1;
+		while (vars->map.map[j][k + 1])
+		{
+			if (vars->map.map[j][k] != '1' && vars->map.map[j][k] != '0' && vars->map.map[j][k] != 'P' && vars->map.map[j][k] != 'E' && vars->map.map[j][k] != 'C')
+			{
+				error = vars->map.map[j][k];
+				break ;
+			}
+			k++;
+		}
+		j++;
+	}
+	if (error != 0)
+		ft_printf("Error\nFIND UNKNOWN ELEMENT ON MAP ('%c' is not 'P'layer, 'E'xit, 'C'ollectable or '1'wall)\n", error);
+	return (error);
+}
+
+int	ft_control_item(t_vars *vars, char c)
 {
 	int	x;
 	int	y;
@@ -644,12 +693,13 @@ int	ft_control_item(t_map *map, char c)
 	x = 0;
 	y = 0;
 	item = 0;
-	while (map->map[y])
+	vars->map.items_find = 1;
+	while (vars->map.map[y])
 	{
 		x = 0;
-		while (map->map[y][x])
+		while (vars->map.map[y][x])
 		{
-			if (map->map[y][x] == c)
+			if (vars->map.map[y][x] == c)
 				item += 1;
 			x++;
 		}
@@ -658,22 +708,24 @@ int	ft_control_item(t_map *map, char c)
 	return (item);
 }
 
-int	ft_control_items(t_map *map)
+int	ft_control_items(t_vars *vars)
 {
 	int	exit;
 	int	player;
 	int	conso;
 
-	exit = ft_control_item(map, 'E');
-	player = ft_control_item(map, 'P');
-	conso = ft_control_item(map, 'C');
+	exit = ft_control_item(vars, 'E');
+	player = ft_control_item(vars, 'P');
+	conso = ft_control_item(vars, 'C');
 	ft_printf("E :%d et P :%d, C :%d\n", exit, player, conso);
 	if (exit == 1 && player == 1 && conso >= 1)
 	{
-		map->items = player + exit + conso;
-		ft_printf("MAP ITEMS :%d\n", map->items);
-		return (player);
+		vars->map.items = player + exit + conso;
+		ft_printf("MAP ITEMS :%d\n", vars->map.items);
+		return (vars->map.items);
 	}
+	if (player != 1 || exit != 1 || conso == 0)
+		ft_printf("Error\nITEMS NUMBER NOT VALABLE : Player = %d, Exit = %d, Collectable = %d\n", player, exit, conso);
 	return (0);
 }
 
@@ -688,36 +740,44 @@ char	**ft_strdup_test(char **src)
 	return (dest);
 }
 
-int ft_parsing_map(char *argv, t_vars vars)
+int ft_parsing_map(char *argv, t_vars *vars)
 {
 	int		i;
 	
 	i = 0;
-	vars.map = (t_map *)malloc(sizeof(t_map));
-	if (!vars.map)
+	vars = (t_vars *)malloc(sizeof(t_vars));
+	if (!vars)
 		return (0);
-	vars.map->map = NULL;
-	vars.map->map = ft_init_map(argv, *vars.map);
-	i = ft_ctrl_map_size(vars.map, i);
-	if (ft_map_control(vars.map, i) != 0 || ft_control_items(vars.map) == 0)
-		ft_exit_map(*vars.map, i);
-	ft_invasion_loop(vars.map);
-	ft_printf("TEST :%d", vars.map->items);
-	ft_print_map(vars.map->map);
-	ft_clean_map(*vars.map, i);
-	vars.map->map = ft_init_map(argv, *vars.map);
-	ft_print_map(vars.map->map);
-	ft_clean_map(*vars.map, i);
-	free(vars.map);
+	vars->map.map = NULL;
+	vars->map.map = ft_init_map(argv, vars);
+	ft_print_map(vars->map.map); //
+	i = ft_ctrl_map_size(vars, i);
+	if (ft_contour_map_control(vars, i) != 0 || ft_elements_map_control(vars) != 0
+	|| ft_control_items(vars) == 0 || ft_invasion_loop(vars) != vars->map.items)
+		ft_exit_map(vars, i);
+	ft_print_map(vars->map.map);
+	ft_clean_map(vars, i);
+	free(vars);
+/* 	i = ft_ctrl_map_size(vars, i);
+	if (ft_map_control(vars, i) != 0 || ft_control_items(vars) == 0)
+		ft_exit_map(vars, i);
+	ft_invasion_loop(vars);
+	ft_printf("TEST :%d", vars.map.items);
+	ft_print_map(vars.map.map);
+	ft_clean_map(vars, i);
+	vars.map.map = ft_init_map(argv, vars);
+	ft_print_map(vars.map.map);
+	ft_clean_map(vars, i);
+//	free(vars); */
 	return (i);
 }
 
 int	main(int argc, char **argv)
 {
 	int	j;
-	t_vars vars;
-	
-	
+	t_vars *vars;
+
+	vars = NULL;
 	if (argc == 2)
 	{
 		ft_printf("Debut du SO_LONG!\n");
