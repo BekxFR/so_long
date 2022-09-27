@@ -6,7 +6,7 @@
 /*   By: chillion <chillion@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/09 10:56:42 by chillion          #+#    #+#             */
-/*   Updated: 2022/09/26 18:52:58 by chillion         ###   ########.fr       */
+/*   Updated: 2022/09/27 17:46:47 by chillion         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,20 +19,22 @@ typedef struct s_data {
 	void	*img;
 	char	*addr;
 	int		pos;
-	int		playerx;
-	int		playery;
 	int		bits_per_pixel;
 	int		line_length;
 	int		endian;
+	int		width;
+	int		height;
 }	t_data;
 
 typedef struct s_map
 {
 	char	**map;
-	int		height;
 	int		width;
-	int		h;
+	int		height;
 	int		w;
+	int		h;
+	int		playerx;
+	int		playery;
 	int		items;
 	int		items_find;
 }	t_map;
@@ -42,6 +44,7 @@ typedef struct s_vars
 	void	*mlx;
 	void	*win;
 	t_data	img;
+	t_data	test;
 	t_map	map;
 }	t_vars;
 
@@ -59,6 +62,14 @@ void	my_mlx_pixel_put(t_data *data, int x, int y, int color)
 
 	dst = data->addr + (y * data->line_length + x * (data->bits_per_pixel / 8));
 	*(unsigned int*)dst = color;
+}
+
+unsigned int	ft_get_color(t_data *data, int x, int y)
+{
+	char *dst;
+
+	dst = data->addr + (y * data->line_length + x * 4);
+	return (*(unsigned int *)dst);
 }
 
 void	ft_draw_circle(t_vars *vars)
@@ -101,11 +112,11 @@ void ft_font_rainbow(t_vars *vars)
 	int j = 0;
 	int x = 0;
 
-	vars->img.img = mlx_new_image(vars->mlx, HEIGHT, WIDTH);
+	vars->img.img = mlx_new_image(vars->mlx, ((vars->map.height - 1) * 40), (vars->map.width * 40));
 	vars->img.addr = mlx_get_data_addr(vars->img.img, &vars->img.bits_per_pixel, &vars->img.line_length, &vars->img.endian);
-	while(i < HEIGHT)
+	while(i < ((vars->map.height - 1) * 40))
 	{
-		while (j < WIDTH)
+		while (j < (vars->map.width * 40))
 		{
 			my_mlx_pixel_put(&vars->img, i, j, ft_rgb_to_int(0, color1, color2, color3));
 			if (j %250 == 0)
@@ -138,6 +149,21 @@ void ft_font_rainbow(t_vars *vars)
 			j++;
 		}
 		j = 0;
+		i++;
+	}
+	double	ratio = (double)vars->test.width / (double)40;
+	int color = 0;
+	i = 0;
+	while (i < 40)
+	{
+		j = 0;
+		while (j < 40)
+		{
+			color = ft_get_color(&vars->test, j * ratio, i * ratio);
+			if (color != 0x0)
+				my_mlx_pixel_put(&vars->img, j + 0, i + 0, color);
+			j++;
+		}
 		i++;
 	}
 	mlx_put_image_to_window(vars->mlx, vars->win, vars->img.img, 0, 0);
@@ -772,38 +798,40 @@ int ft_close_event(t_vars *vars)
 
 void	ft_draw_player(t_vars *vars, int key)
 {
-	vars->img.img = mlx_xpm_file_to_image(vars->mlx, "./textures/toto.xpm", &vars->map.w, &vars->map.h);
-	vars->img.addr = mlx_get_data_addr(vars->img.img, &vars->img.bits_per_pixel, &vars->img.line_length, &vars->img.endian);
+	vars->test.img = mlx_xpm_file_to_image(vars->mlx, "./textures/toto.xpm", &vars->map.w, &vars->map.h);
+	vars->test.addr = mlx_get_data_addr(vars->test.img, &vars->test.bits_per_pixel, &vars->test.line_length, &vars->test.endian);
+	ft_printf("vars->map.playerx :%d, vars->map.playery :%d\n", vars->map.playerx, vars->map.playery);
+	ft_printf("vars->map.map[vars->map.playerx] :%c, vars->map.map[vars->map.playery] :%c\n", vars->map.map[vars->map.playerx], vars->map.map[vars->map.playery]);
 	if (key == 119) //w
 	{
-		if (vars->img.playery > 0)
+		if (vars->map.playery > 0 && vars->map.map[vars->map.playery - 1][vars->map.playerx] != '1')
 		{
 			ft_printf("TEST1\n");
-			vars->img.playery = vars->img.playery - 1;
+			vars->map.playery = vars->map.playery - 1;
 		}
 	}
 	if (key == 115) //s
 	{
-		if (vars->img.playery < vars->map.width - 1){
+		if (vars->map.playery < vars->map.width - 1 && vars->map.map[vars->map.playery + 1][vars->map.playerx] != '1'){
 			ft_printf("TEST2\n");
-			vars->img.playery = vars->img.playery + 1;}
+			vars->map.playery = vars->map.playery + 1;}
 	}
 	if (key == 100) //d
 	{
-		if (vars->img.playerx < vars->map.height - 2){
+		if (vars->map.playerx < vars->map.height - 2 && vars->map.map[vars->map.playery][vars->map.playerx + 1] != '1'){
 			ft_printf("TEST3\n");
-			vars->img.playerx = vars->img.playerx + 1;}
+			vars->map.playerx = vars->map.playerx + 1;}
 	}
 	if (key == 97) //a
 	{
-		if (vars->img.playerx > 0){
+		if (vars->map.playerx > 0 && vars->map.map[vars->map.playery][vars->map.playerx - 1] != '1'){
 			ft_printf("TEST4\n");
-			vars->img.playerx = vars->img.playerx - 1;}
+			vars->map.playerx = vars->map.playerx - 1;}
 	}
-	vars->map.w = vars->img.playerx * vars->map.w;
-	vars->map.h = vars->img.playery * vars->map.h;
-	mlx_put_image_to_window(vars->mlx, vars->win, vars->img.img, vars->map.w, vars->map.h);
-	mlx_destroy_image(vars->mlx, vars->img.img);
+	vars->map.w = vars->map.playerx * vars->map.w;
+	vars->map.h = vars->map.playery * vars->map.h;
+	mlx_put_image_to_window(vars->mlx, vars->win, vars->test.img, vars->map.w, vars->map.h);
+//	mlx_destroy_image(vars->mlx, vars->test.img);
 /* 	vars->img.img = mlx_xpm_file_to_image(vars->mlx, "./textures/toto.xpm", &vars->map.w, &vars->map.h);
 	vars->img.addr = mlx_get_data_addr(vars->img.img, &vars->img.bits_per_pixel, &vars->img.line_length, &vars->img.endian);
 	ft_printf("vars->map.h :%d, vars->map.w :%d", vars->map.h, vars->map.w);
@@ -812,6 +840,53 @@ void	ft_draw_player(t_vars *vars, int key)
 	ft_printf("vars->map.h :%d, vars->map.w :%d", vars->map.h, vars->map.w);
 	mlx_put_image_to_window(vars->mlx, vars->win, vars->img.img, vars->map.h, vars->map.w);
 	mlx_destroy_image(vars->mlx, vars->img.img); */
+}
+
+void	ft_init_draw_player(t_vars *vars, int x, int y)
+{
+//	vars->img.img = mlx_new_image(vars->mlx, ((vars->map.height - 1) * 64), (vars->map.width * 64));
+	int	i;
+	int	j;
+	int	color;
+	double	ratio = (double)vars->test.width / (double)40;
+
+	ft_printf("TEST4: %d\n", ratio);
+	i = 0;
+	while (i < 40)
+	{
+		j = 0;
+		while (j < 40)
+		{
+			color = ft_get_color(&vars->test, j * ratio, i * ratio);
+			if (color != 0x0)
+				my_mlx_pixel_put(&vars->img, j + x, i + y, color);
+			j++;
+		}
+		i++;
+	}
+/* 	my_mlx_pixel_put(&vars->img, 10, 10, 0xFFFFFFFF);
+	my_mlx_pixel_put(&vars->img, 0, 0, ft_get_color(&vars->test, 50, 50)); */
+//	mlx_put_image_to_window(vars->mlx, vars->win, vars->img.img, 0, 0);
+//	mlx_put_image_to_window(vars->mlx, vars->win, vars->test.img, 0, 0);
+//	mlx_destroy_image(vars->mlx, vars->img.img);
+}
+
+/* void	ft_init_draw_player(t_vars *vars, int x, int y)
+{
+//	vars->img.img = mlx_new_image(vars->mlx, ((vars->map.height - 1) * 64), (vars->map.width * 64));
+	vars->img.img = mlx_xpm_file_to_image(vars->mlx, "./textures/toto.xpm", &vars->map.w, &vars->map.h);
+	vars->img.addr = mlx_get_data_addr(vars->img.img, &vars->img.bits_per_pixel, &vars->img.line_length, &vars->img.endian);
+	ft_printf("vars->map.h :%d, vars->map.w :%d", vars->map.h, vars->map.w);
+	vars->map.h = x * vars->map.h;
+	vars->map.w = y * vars->map.w;
+	ft_printf("vars->map.h :%d, vars->map.w :%d", vars->map.h, vars->map.w);
+	mlx_put_image_to_window(vars->mlx, vars->win, vars->img.img, vars->map.h, vars->map.w);
+//	mlx_destroy_image(vars->mlx, vars->img.img);
+} */
+
+void	ft_init_draw_player2(t_vars *vars, int x, int y)
+{
+	ft_init_draw_player(vars, x, y);
 }
 
 int	ft_keypress_event(int key, t_vars *vars)
@@ -840,7 +915,7 @@ void	ft_draw_walls(t_vars *vars, int x, int y)
 	vars->map.w = y * vars->map.w;
 	ft_printf("vars->map.h :%d, vars->map.w :%d", vars->map.h, vars->map.w);
 	mlx_put_image_to_window(vars->mlx, vars->win, vars->img.img, vars->map.h, vars->map.w);
-	mlx_destroy_image(vars->mlx, vars->img.img);
+//	mlx_destroy_image(vars->mlx, vars->img.img);
 }
 
 void	ft_draw_map(t_vars *vars)
@@ -848,18 +923,19 @@ void	ft_draw_map(t_vars *vars)
 	int	x;
 	int	y;
 
-	x = 0;
 	y = 0;
 	while (vars->map.map[y])
 	{
 		x = 0;
 		while (vars->map.map[y][x])
 		{
-			if (vars->map.map[y][x] == '1')
-				ft_draw_walls(vars, x , y);
-/* 			if (vars->map.map[y][x] == 'P')
-				ft_draw_player(vars, x , y);
-			if (vars->map.map[y][x] == '0')
+/* 			if (vars->map.map[y][x] == '1')
+				ft_draw_walls(vars, x , y); */
+			if (vars->map.map[y][x] == '1'){
+					vars->map.playerx = x;
+					vars->map.playery = y;
+				ft_init_draw_player2(vars, x , y);}
+/* 			if (vars->map.map[y][x] == '0')
 				ft_draw_font(vars, x , y);
 			if (vars->map.map[y][x] == 'C')
 				ft_draw_conso(vars, x , y);
@@ -869,6 +945,13 @@ void	ft_draw_map(t_vars *vars)
 		}
 		y++;
 	}
+	mlx_put_image_to_window(vars->mlx, vars->win, vars->img.img, 0, 0);
+}
+
+void	ft_init_sprites(t_vars *vars)
+{
+	vars->test.img = mlx_xpm_file_to_image(vars->mlx, "./textures/toto.xpm", &vars->test.width , &vars->test.height);
+	vars->test.addr = mlx_get_data_addr(vars->test.img, &vars->test.bits_per_pixel, &vars->test.line_length, &vars->test.endian);
 }
 
 void	ft_init_window(char *argv, t_vars *vars)
@@ -878,20 +961,43 @@ void	ft_init_window(char *argv, t_vars *vars)
 	j = 0;
 	j = ft_size_init_map(argv, vars);
 	vars->map.map = ft_init_map(argv, vars, j);
-	vars->img.playerx = 0;
-	vars->img.playery = 0;
 	vars->mlx = mlx_init();
-	vars->win = mlx_new_window(vars->mlx, ((vars->map.height - 1) * 64), (vars->map.width * 64), "so_long");
+	vars->win = mlx_new_window(vars->mlx, ((vars->map.height - 1) * 40), (vars->map.width * 40), "so_long");
+	vars->img.img = mlx_new_image(vars->mlx, ((vars->map.height - 1) * 40), (vars->map.width * 40));
+	vars->img.addr = mlx_get_data_addr(vars->img.img, &vars->img.bits_per_pixel, &vars->img.line_length, &vars->img.endian);
 	mlx_hook(vars->win, 2, 1L<<0, ft_keypress_event, vars);
 	mlx_hook(vars->win, 17, 1L<<17, ft_close_event, vars);
-	//ft_draw_map(vars);
-	ft_draw_walls(vars, 0 , 0);
+	ft_font_rainbow(vars);
+//	ft_draw_map(vars);
+//	ft_draw_walls(vars, 0 , 0);
 	mlx_loop(vars->mlx);
 //	mlx_destroy_image(vars->mlx, vars->img.img);
 	mlx_destroy_window(vars->mlx, vars->win);
 	mlx_destroy_display(vars->mlx);
 	free(vars->mlx);
 }
+
+/* void	ft_init_window(char *argv, t_vars *vars)
+{
+	int	j;
+
+	j = 0;
+	j = ft_size_init_map(argv, vars);
+	vars->map.map = ft_init_map(argv, vars, j);
+	vars->mlx = mlx_init();
+	vars->win = mlx_new_window(vars->mlx, ((vars->map.height - 1) * 64), (vars->map.width * 64), "so_long");
+	vars->win = mlx_new_window(vars->mlx, ((vars->map.height - 1) * 64), (vars->map.width * 64), "so_long");
+	
+	mlx_hook(vars->win, 2, 1L<<0, ft_keypress_event, vars);
+	mlx_hook(vars->win, 17, 1L<<17, ft_close_event, vars);
+	ft_draw_map(vars);
+//	ft_draw_walls(vars, 0 , 0);
+	mlx_loop(vars->mlx);
+//	mlx_destroy_image(vars->mlx, vars->img.img);
+	mlx_destroy_window(vars->mlx, vars->win);
+	mlx_destroy_display(vars->mlx);
+	free(vars->mlx);
+} */
 
 int ft_parsing_map(char *argv, t_vars *vars)
 {
