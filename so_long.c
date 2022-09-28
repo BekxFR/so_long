@@ -6,7 +6,7 @@
 /*   By: chillion <chillion@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/09 10:56:42 by chillion          #+#    #+#             */
-/*   Updated: 2022/09/27 17:46:47 by chillion         ###   ########.fr       */
+/*   Updated: 2022/09/28 18:58:33 by chillion         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,14 @@ typedef struct s_vars
 	void	*mlx;
 	void	*win;
 	t_data	img;
-	t_data	test;
+	t_data	font;
+	t_data	wall;
+	t_data	sheepl;
+	t_data	sheepr;
+	t_data	sheepb;
+	t_data	sheeph;
+	t_data	conso;
+	t_data	exit;
 	t_map	map;
 }	t_vars;
 
@@ -112,11 +119,11 @@ void ft_font_rainbow(t_vars *vars)
 	int j = 0;
 	int x = 0;
 
-	vars->img.img = mlx_new_image(vars->mlx, ((vars->map.height - 1) * 40), (vars->map.width * 40));
+	vars->img.img = mlx_new_image(vars->mlx, ((vars->map.height - 1) * 48), (vars->map.width * 48));
 	vars->img.addr = mlx_get_data_addr(vars->img.img, &vars->img.bits_per_pixel, &vars->img.line_length, &vars->img.endian);
-	while(i < ((vars->map.height - 1) * 40))
+	while(i < ((vars->map.height - 1) * 48))
 	{
-		while (j < (vars->map.width * 40))
+		while (j < (vars->map.width * 48))
 		{
 			my_mlx_pixel_put(&vars->img, i, j, ft_rgb_to_int(0, color1, color2, color3));
 			if (j %250 == 0)
@@ -151,13 +158,13 @@ void ft_font_rainbow(t_vars *vars)
 		j = 0;
 		i++;
 	}
-	double	ratio = (double)vars->test.width / (double)40;
+/* 	double	ratio = (double)vars->test.width / (double)180;
 	int color = 0;
 	i = 0;
-	while (i < 40)
+	while (i < 180)
 	{
 		j = 0;
-		while (j < 40)
+		while (j < 180)
 		{
 			color = ft_get_color(&vars->test, j * ratio, i * ratio);
 			if (color != 0x0)
@@ -165,9 +172,10 @@ void ft_font_rainbow(t_vars *vars)
 			j++;
 		}
 		i++;
-	}
+	} */
+//	double	ratio = (double)vars->test.width / (double)180;
 	mlx_put_image_to_window(vars->mlx, vars->win, vars->img.img, 0, 0);
-	mlx_destroy_image(vars->mlx, vars->img.img);
+//	mlx_destroy_image(vars->mlx, vars->img.img);
 }
 
 int ft_render_next_frame(t_vars *vars)
@@ -796,53 +804,9 @@ int ft_close_event(t_vars *vars)
 	exit(0);
 }
 
-void	ft_draw_player(t_vars *vars, int key)
-{
-	vars->test.img = mlx_xpm_file_to_image(vars->mlx, "./textures/toto.xpm", &vars->map.w, &vars->map.h);
-	vars->test.addr = mlx_get_data_addr(vars->test.img, &vars->test.bits_per_pixel, &vars->test.line_length, &vars->test.endian);
-	ft_printf("vars->map.playerx :%d, vars->map.playery :%d\n", vars->map.playerx, vars->map.playery);
-	ft_printf("vars->map.map[vars->map.playerx] :%c, vars->map.map[vars->map.playery] :%c\n", vars->map.map[vars->map.playerx], vars->map.map[vars->map.playery]);
-	if (key == 119) //w
-	{
-		if (vars->map.playery > 0 && vars->map.map[vars->map.playery - 1][vars->map.playerx] != '1')
-		{
-			ft_printf("TEST1\n");
-			vars->map.playery = vars->map.playery - 1;
-		}
-	}
-	if (key == 115) //s
-	{
-		if (vars->map.playery < vars->map.width - 1 && vars->map.map[vars->map.playery + 1][vars->map.playerx] != '1'){
-			ft_printf("TEST2\n");
-			vars->map.playery = vars->map.playery + 1;}
-	}
-	if (key == 100) //d
-	{
-		if (vars->map.playerx < vars->map.height - 2 && vars->map.map[vars->map.playery][vars->map.playerx + 1] != '1'){
-			ft_printf("TEST3\n");
-			vars->map.playerx = vars->map.playerx + 1;}
-	}
-	if (key == 97) //a
-	{
-		if (vars->map.playerx > 0 && vars->map.map[vars->map.playery][vars->map.playerx - 1] != '1'){
-			ft_printf("TEST4\n");
-			vars->map.playerx = vars->map.playerx - 1;}
-	}
-	vars->map.w = vars->map.playerx * vars->map.w;
-	vars->map.h = vars->map.playery * vars->map.h;
-	mlx_put_image_to_window(vars->mlx, vars->win, vars->test.img, vars->map.w, vars->map.h);
-//	mlx_destroy_image(vars->mlx, vars->test.img);
-/* 	vars->img.img = mlx_xpm_file_to_image(vars->mlx, "./textures/toto.xpm", &vars->map.w, &vars->map.h);
-	vars->img.addr = mlx_get_data_addr(vars->img.img, &vars->img.bits_per_pixel, &vars->img.line_length, &vars->img.endian);
-	ft_printf("vars->map.h :%d, vars->map.w :%d", vars->map.h, vars->map.w);
-	vars->map.h = x * vars->map.h;
-	vars->map.w = y * vars->map.w;
-	ft_printf("vars->map.h :%d, vars->map.w :%d", vars->map.h, vars->map.w);
-	mlx_put_image_to_window(vars->mlx, vars->win, vars->img.img, vars->map.h, vars->map.w);
-	mlx_destroy_image(vars->mlx, vars->img.img); */
-}
 
-void	ft_init_draw_player(t_vars *vars, int x, int y)
+
+/* void	ft_init_draw_player(t_vars *vars, int x, int y)
 {
 //	vars->img.img = mlx_new_image(vars->mlx, ((vars->map.height - 1) * 64), (vars->map.width * 64));
 	int	i;
@@ -863,13 +827,13 @@ void	ft_init_draw_player(t_vars *vars, int x, int y)
 			j++;
 		}
 		i++;
-	}
+	} */
 /* 	my_mlx_pixel_put(&vars->img, 10, 10, 0xFFFFFFFF);
 	my_mlx_pixel_put(&vars->img, 0, 0, ft_get_color(&vars->test, 50, 50)); */
 //	mlx_put_image_to_window(vars->mlx, vars->win, vars->img.img, 0, 0);
 //	mlx_put_image_to_window(vars->mlx, vars->win, vars->test.img, 0, 0);
 //	mlx_destroy_image(vars->mlx, vars->img.img);
-}
+//}
 
 /* void	ft_init_draw_player(t_vars *vars, int x, int y)
 {
@@ -884,18 +848,273 @@ void	ft_init_draw_player(t_vars *vars, int x, int y)
 //	mlx_destroy_image(vars->mlx, vars->img.img);
 } */
 
-void	ft_init_draw_player2(t_vars *vars, int x, int y)
+void	ft_init_draw_player(t_vars *vars, int x, int y)
 {
-	ft_init_draw_player(vars, x, y);
+	int	i;
+	int	j;
+	int	color;
+	
+	i = 0;
+	j = 0;
+	color = 0;	
+	while (i < 48)
+	{
+		j = 0;
+		while (j < 48)
+		{
+			color = ft_get_color(&vars->sheepl, j, i);
+			if (color != 0x0 || color == 0x00000000)
+				my_mlx_pixel_put(&vars->img, j + (x * 48), i + (y * 48), color);
+			j++;
+		}
+		i++;
+	}
+} 
+
+void	ft_draw_player_right(t_vars *vars, int x, int y)
+{
+	int	i;
+	int	j;
+	int	color;
+	
+	i = 0;
+	j = 0;
+	color = 0;	
+	while (i < 48)
+	{
+		j = 0;
+		while (j < 48)
+		{
+			color = ft_get_color(&vars->sheepr, j, i);
+			if (color != 0x0 || color == 0x00000000)
+				my_mlx_pixel_put(&vars->img, j + (x * 48), i + (y * 48), color);
+			j++;
+		}
+		i++;
+	}
+} 
+
+void	ft_draw_player_down(t_vars *vars, int x, int y)
+{
+	int	i;
+	int	j;
+	int	color;
+	
+	i = 0;
+	j = 0;
+	color = 0;	
+	while (i < 48)
+	{
+		j = 0;
+		while (j < 48)
+		{
+			color = ft_get_color(&vars->sheepb, j, i);
+			if (color != 0x0 || color == 0x00000000)
+				my_mlx_pixel_put(&vars->img, j + (x * 48), i + (y * 48), color);
+			j++;
+		}
+		i++;
+	}
+} 
+
+void	ft_draw_player_up(t_vars *vars, int x, int y)
+{
+	int	i;
+	int	j;
+	int	color;
+	
+	i = 0;
+	j = 0;
+	color = 0;	
+	while (i < 48)
+	{
+		j = 0;
+		while (j < 48)
+		{
+			color = ft_get_color(&vars->sheeph, j, i);
+			if (color != 0x0 || color == 0x00000000)
+				my_mlx_pixel_put(&vars->img, j + (x * 48), i + (y * 48), color);
+			j++;
+		}
+		i++;
+	}
+} 
+
+void	ft_init_draw_font(t_vars *vars, int x, int y)
+{
+	int	i;
+	int	j;
+	int	color;
+	
+	i = 0;
+	j = 0;
+	color = 0;	
+	while (i < 48)
+	{
+		j = 0;
+		while (j < 48)
+		{
+			color = ft_get_color(&vars->font, j, i);
+			if (color != 0x0)
+				my_mlx_pixel_put(&vars->img, j + (x * 48), i + (y * 48), color);
+			j++;
+		}
+		i++;
+	}
+} 
+
+void	ft_init_draw_wall(t_vars *vars, int x, int y)
+{
+	int	i;
+	int	j;
+	int	color;
+	
+	i = 0;
+	j = 0;
+	color = 0;	
+	while (i < 48)
+	{
+		j = 0;
+		while (j < 48)
+		{
+			color = ft_get_color(&vars->wall, j, i);
+			if (color != 0x0)
+				my_mlx_pixel_put(&vars->img, j + (x * 48), i + (y * 48), color);
+			j++;
+		}
+		i++;
+	}
+} 
+
+void	ft_init_draw_collectable(t_vars *vars, int x, int y)
+{
+	int	i;
+	int	j;
+	int	color;
+	
+	i = 0;
+	j = 0;
+	color = 0;	
+	while (i < 48)
+	{
+		j = 0;
+		while (j < 48)
+		{
+			color = ft_get_color(&vars->conso, j, i);
+			if (color != 0x0)
+				my_mlx_pixel_put(&vars->img, j + (x * 48), i + (y * 48), color);
+			j++;
+		}
+		i++;
+	}
+} 
+
+void	ft_init_draw_exit(t_vars *vars, int x, int y)
+{
+	int	i;
+	int	j;
+	int	color;
+	
+	i = 0;
+	j = 0;
+	color = 0;	
+	while (i < 48)
+	{
+		j = 0;
+		while (j < 48)
+		{
+			color = ft_get_color(&vars->exit, j, i);
+			if (color != 0x0)
+				my_mlx_pixel_put(&vars->img, j + (x * 48), i + (y * 48), color);
+			j++;
+		}
+		i++;
+	}
+} 
+
+void	ft_switch_player_image(t_vars *vars, int x, int y)
+{
+	if (vars->map.map[x][y] == 'C')
+	{
+		vars->sheepl.img = mlx_xpm_file_to_image(vars->mlx, "./textures/SheepYCL.xpm", &vars->sheepl.width , &vars->sheepl.height);
+		vars->sheepl.addr = mlx_get_data_addr(vars->sheepl.img, &vars->sheepl.bits_per_pixel, &vars->sheepl.line_length, &vars->sheepl.endian);
+		vars->sheepr.img = mlx_xpm_file_to_image(vars->mlx, "./textures/SheepYCR.xpm", &vars->sheepr.width , &vars->sheepr.height);
+		vars->sheepr.addr = mlx_get_data_addr(vars->sheepr.img, &vars->sheepr.bits_per_pixel, &vars->sheepr.line_length, &vars->sheepr.endian);
+		vars->sheepb.img = mlx_xpm_file_to_image(vars->mlx, "./textures/SheepYCF.xpm", &vars->sheepb.width , &vars->sheepb.height);
+		vars->sheepb.addr = mlx_get_data_addr(vars->sheepb.img, &vars->sheepb.bits_per_pixel, &vars->sheepb.line_length, &vars->sheepb.endian);
+		vars->sheeph.img = mlx_xpm_file_to_image(vars->mlx, "./textures/SheepYCB.xpm", &vars->sheeph.width , &vars->sheeph.height);
+		vars->sheeph.addr = mlx_get_data_addr(vars->sheeph.img, &vars->sheeph.bits_per_pixel, &vars->sheeph.line_length, &vars->sheeph.endian);
+		vars->map.map[x][y] = '0';
+	}
+}
+
+void	ft_draw_player(t_vars *vars, int key)
+{
+	if (key == 119 || key == 65362) //w
+	{
+		if (vars->map.playery > 0 && vars->map.map[vars->map.playery - 1][vars->map.playerx] != '1')
+		{
+			ft_switch_player_image(vars, (vars->map.playery - 1), vars->map.playerx);
+			ft_init_draw_font(vars, vars->map.playerx, vars->map.playery);
+			vars->map.playery = vars->map.playery - 1;
+			ft_draw_player_up(vars, vars->map.playerx, vars->map.playery);
+		}
+	}
+	if (key == 115 || key == 65364) //s
+	{
+		if (vars->map.playery < vars->map.width - 1 && vars->map.map[vars->map.playery + 1][vars->map.playerx] != '1')
+		{
+			ft_switch_player_image(vars, (vars->map.playery + 1), vars->map.playerx);
+			ft_init_draw_font(vars, vars->map.playerx, vars->map.playery);
+			vars->map.playery = vars->map.playery + 1;
+			ft_draw_player_down(vars, vars->map.playerx, vars->map.playery);
+		}
+	}
+	if (key == 100 || key == 65363) //d
+	{
+		if (vars->map.playerx < vars->map.height - 2 && vars->map.map[vars->map.playery][vars->map.playerx + 1] != '1')
+		{
+			ft_switch_player_image(vars, vars->map.playery, (vars->map.playerx + 1));
+			ft_init_draw_font(vars, vars->map.playerx, vars->map.playery);
+			vars->map.playerx = vars->map.playerx + 1;
+			ft_draw_player_right(vars, vars->map.playerx, vars->map.playery);
+		}
+	}
+	if (key == 97 || key == 65361) //a
+	{
+		if (vars->map.playerx > 0 && vars->map.map[vars->map.playery][vars->map.playerx - 1] != '1')
+		{
+			ft_switch_player_image(vars, vars->map.playery, (vars->map.playerx - 1));
+			ft_init_draw_font(vars, vars->map.playerx, vars->map.playery);
+			vars->map.playerx = vars->map.playerx - 1;
+			ft_init_draw_player(vars, vars->map.playerx, vars->map.playery);
+		}
+	}
+	mlx_put_image_to_window(vars->mlx, vars->win, vars->img.img, vars->map.h, vars->map.w);
+}
+
+void	ft_init_draws(t_vars *vars, int x, int y, char c)
+{
+	if (c == '1')
+		ft_init_draw_wall(vars, x, y);
+	if (c == 'P')
+		ft_init_draw_player(vars, x, y);
+	if (c == '0')
+		ft_init_draw_font(vars, x, y);
+	if (c == 'C')
+		ft_init_draw_collectable(vars, x, y);
+	if (c == 'E')
+		ft_init_draw_exit(vars, x, y);
+	mlx_put_image_to_window(vars->mlx, vars->win, vars->img.img, vars->map.h, vars->map.w);
 }
 
 int	ft_keypress_event(int key, t_vars *vars)
 {
 	ft_printf("Key = %d\n", key);
-	if (key == 65362){ft_move_img(vars, key);} //haut
-	if (key == 65364){ft_move_img(vars, key);} //bas
-	if (key == 65363){ft_draw_circle(vars);} //droite
-	if (key == 65361){ft_draw_line(vars, 800, 500, 0, 0, 0xFFFFFFFF);} //gauche
+	if (key == 65362){ft_draw_player(vars, key);} //haut
+	if (key == 65364){ft_draw_player(vars, key);} //bas
+	if (key == 65363){ft_draw_player(vars, key);} //droite
+	if (key == 65361){ft_draw_player(vars, key);} //gauche
 	if (key == 119){ft_draw_player(vars, key);} //w
 	if (key == 115){ft_draw_player(vars, key);} //s
 	if (key == 100){ft_draw_player(vars, key);} //d
@@ -929,18 +1148,20 @@ void	ft_draw_map(t_vars *vars)
 		x = 0;
 		while (vars->map.map[y][x])
 		{
-/* 			if (vars->map.map[y][x] == '1')
-				ft_draw_walls(vars, x , y); */
-			if (vars->map.map[y][x] == '1'){
-					vars->map.playerx = x;
-					vars->map.playery = y;
-				ft_init_draw_player2(vars, x , y);}
-/* 			if (vars->map.map[y][x] == '0')
-				ft_draw_font(vars, x , y);
+			if (vars->map.map[y][x] == '1')
+				ft_init_draws(vars, x , y, '1');
+			if (vars->map.map[y][x] == 'P')
+			{
+				vars->map.playerx = x;
+				vars->map.playery = y;
+				ft_init_draws(vars, x , y, 'P');
+			}
+			if (vars->map.map[y][x] == '0')
+				ft_init_draws(vars, x , y, '0');
 			if (vars->map.map[y][x] == 'C')
-				ft_draw_conso(vars, x , y);
+				ft_init_draws(vars, x , y, 'C');
 			if (vars->map.map[y][x] == 'E')
-				ft_draw_exit(vars, x , y); */
+				ft_init_draws(vars, x , y, 'E');
 			x++;
 		}
 		y++;
@@ -950,8 +1171,22 @@ void	ft_draw_map(t_vars *vars)
 
 void	ft_init_sprites(t_vars *vars)
 {
-	vars->test.img = mlx_xpm_file_to_image(vars->mlx, "./textures/toto.xpm", &vars->test.width , &vars->test.height);
-	vars->test.addr = mlx_get_data_addr(vars->test.img, &vars->test.bits_per_pixel, &vars->test.line_length, &vars->test.endian);
+	vars->font.img = mlx_xpm_file_to_image(vars->mlx, "./textures/Grass.xpm", &vars->font.width , &vars->font.height);
+	vars->font.addr = mlx_get_data_addr(vars->font.img, &vars->font.bits_per_pixel, &vars->font.line_length, &vars->font.endian);
+	vars->wall.img = mlx_xpm_file_to_image(vars->mlx, "./textures/Tree2.xpm", &vars->wall.width , &vars->wall.height);
+	vars->wall.addr = mlx_get_data_addr(vars->wall.img, &vars->wall.bits_per_pixel, &vars->wall.line_length, &vars->wall.endian);
+	vars->sheepl.img = mlx_xpm_file_to_image(vars->mlx, "./textures/SheepL.xpm", &vars->sheepl.width , &vars->sheepl.height);
+	vars->sheepl.addr = mlx_get_data_addr(vars->sheepl.img, &vars->sheepl.bits_per_pixel, &vars->sheepl.line_length, &vars->sheepl.endian);
+	vars->sheepr.img = mlx_xpm_file_to_image(vars->mlx, "./textures/SheepR.xpm", &vars->sheepr.width , &vars->sheepr.height);
+	vars->sheepr.addr = mlx_get_data_addr(vars->sheepr.img, &vars->sheepr.bits_per_pixel, &vars->sheepr.line_length, &vars->sheepr.endian);
+	vars->sheepb.img = mlx_xpm_file_to_image(vars->mlx, "./textures/SheepF.xpm", &vars->sheepb.width , &vars->sheepb.height);
+	vars->sheepb.addr = mlx_get_data_addr(vars->sheepb.img, &vars->sheepb.bits_per_pixel, &vars->sheepb.line_length, &vars->sheepb.endian);
+	vars->sheeph.img = mlx_xpm_file_to_image(vars->mlx, "./textures/SheepB.xpm", &vars->sheeph.width , &vars->sheeph.height);
+	vars->sheeph.addr = mlx_get_data_addr(vars->sheeph.img, &vars->sheeph.bits_per_pixel, &vars->sheeph.line_length, &vars->sheeph.endian);
+	vars->conso.img = mlx_xpm_file_to_image(vars->mlx, "./textures/YCombi.xpm", &vars->conso.width , &vars->conso.height);
+	vars->conso.addr = mlx_get_data_addr(vars->conso.img, &vars->conso.bits_per_pixel, &vars->conso.line_length, &vars->conso.endian);
+	vars->exit.img = mlx_xpm_file_to_image(vars->mlx, "./textures/Shower.xpm", &vars->exit.width , &vars->exit.height);
+	vars->exit.addr = mlx_get_data_addr(vars->exit.img, &vars->exit.bits_per_pixel, &vars->exit.line_length, &vars->exit.endian);
 }
 
 void	ft_init_window(char *argv, t_vars *vars)
@@ -962,13 +1197,14 @@ void	ft_init_window(char *argv, t_vars *vars)
 	j = ft_size_init_map(argv, vars);
 	vars->map.map = ft_init_map(argv, vars, j);
 	vars->mlx = mlx_init();
-	vars->win = mlx_new_window(vars->mlx, ((vars->map.height - 1) * 40), (vars->map.width * 40), "so_long");
-	vars->img.img = mlx_new_image(vars->mlx, ((vars->map.height - 1) * 40), (vars->map.width * 40));
+	vars->win = mlx_new_window(vars->mlx, ((vars->map.height - 1) * 48), (vars->map.width * 48), "so_long");
+	vars->img.img = mlx_new_image(vars->mlx, ((vars->map.height - 1) * 48), (vars->map.width * 48));
 	vars->img.addr = mlx_get_data_addr(vars->img.img, &vars->img.bits_per_pixel, &vars->img.line_length, &vars->img.endian);
 	mlx_hook(vars->win, 2, 1L<<0, ft_keypress_event, vars);
 	mlx_hook(vars->win, 17, 1L<<17, ft_close_event, vars);
-	ft_font_rainbow(vars);
-//	ft_draw_map(vars);
+	ft_init_sprites(vars);
+//	ft_font_rainbow(vars);
+	ft_draw_map(vars);
 //	ft_draw_walls(vars, 0 , 0);
 	mlx_loop(vars->mlx);
 //	mlx_destroy_image(vars->mlx, vars->img.img);
