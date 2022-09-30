@@ -6,7 +6,7 @@
 /*   By: chillion <chillion@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/09 10:56:42 by chillion          #+#    #+#             */
-/*   Updated: 2022/09/28 18:58:33 by chillion         ###   ########.fr       */
+/*   Updated: 2022/09/30 19:05:56 by chillion         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,11 +19,15 @@ typedef struct s_data {
 	void	*img;
 	char	*addr;
 	int		pos;
+	int		addr_use;
 	int		bits_per_pixel;
 	int		line_length;
 	int		endian;
 	int		width;
 	int		height;
+	int		color1;
+	int		color2;
+	int		color3;
 }	t_data;
 
 typedef struct s_map
@@ -35,6 +39,8 @@ typedef struct s_map
 	int		h;
 	int		playerx;
 	int		playery;
+	int		conso;
+	int		status;
 	int		items;
 	int		items_find;
 }	t_map;
@@ -43,6 +49,7 @@ typedef struct s_vars
 {
 	void	*mlx;
 	void	*win;
+	int		key_count;
 	t_data	img;
 	t_data	font;
 	t_data	wall;
@@ -51,60 +58,60 @@ typedef struct s_vars
 	t_data	sheepb;
 	t_data	sheeph;
 	t_data	conso;
+	t_data	conso2;
 	t_data	exit;
 	t_map	map;
 }	t_vars;
 
 void	ft_stop_all(t_vars *vars)
 {
-//	mlx_destroy_image(vars->mlx, vars->img.img);
+	ft_printf("ADDR_USE :%d\n", vars->img.addr_use);
+	if (vars->img.addr_use >= 1)
+		mlx_destroy_image(vars->mlx, vars->img.img);
+	if (vars->img.addr_use >= 2)
+		mlx_destroy_image(vars->mlx, vars->font.img);
+	if (vars->img.addr_use >= 3)
+		mlx_destroy_image(vars->mlx, vars->conso.img);
+	if (vars->img.addr_use >= 4)
+		mlx_destroy_image(vars->mlx, vars->conso2.img);
+	if (vars->img.addr_use >= 5)
+		mlx_destroy_image(vars->mlx, vars->exit.img);
+	if (vars->img.addr_use >= 6)
+		mlx_destroy_image(vars->mlx, vars->wall.img);
+	if (vars->img.addr_use >= 7)
+		mlx_destroy_image(vars->mlx, vars->sheepl.img);
+	if (vars->img.addr_use >= 8)
+		mlx_destroy_image(vars->mlx, vars->sheepr.img);
+	if (vars->img.addr_use >= 9)
+		mlx_destroy_image(vars->mlx, vars->sheeph.img);
+	if (vars->img.addr_use >= 10)
+		mlx_destroy_image(vars->mlx, vars->sheepb.img);
 	mlx_destroy_window(vars->mlx, vars->win);
 	mlx_destroy_display(vars->mlx);
 	free(vars->mlx);
 }
 
-void	my_mlx_pixel_put(t_data *data, int x, int y, int color)
+void	ft_my_mlx_pixel_put(t_data *data, int x, int y, int color)
 {
-	char *dst;
+	char	*dst;
 
 	dst = data->addr + (y * data->line_length + x * (data->bits_per_pixel / 8));
-	*(unsigned int*)dst = color;
+	*(unsigned int *)dst = color;
 }
 
 unsigned int	ft_get_color(t_data *data, int x, int y)
 {
-	char *dst;
+	char	*dst;
 
 	dst = data->addr + (y * data->line_length + x * 4);
 	return (*(unsigned int *)dst);
 }
 
-void	ft_draw_circle(t_vars *vars)
+int	ft_rgb_to_int(int t, int r, int g, int b)
 {
-	vars->img.img = mlx_new_image(vars->mlx, 40, 40);
-	vars->img.addr = mlx_get_data_addr(vars->img.img, &vars->img.bits_per_pixel, &vars->img.line_length, &vars->img.endian);
-	int r = 20;
-	int N = 2*r+1;
-    int x, y;
-    for (int i = 0; i < N; i++)
-    {
-        for (int j = 0; j < N; j++)
-        {
-            x = i-r;
-            y = j-r;
- 
-            if (x*x + y*y <= r*r+1 )
-                my_mlx_pixel_put(&vars->img, i, j, 0xFFFFFF00);
-        }
-    }
-	my_mlx_pixel_put(&vars->img, 0, 20, 0xFFFFFF00);
-	mlx_put_image_to_window(vars->mlx, vars->win, vars->img.img, 380, 230);
-	mlx_destroy_image(vars->mlx, vars->img.img);
-}
+	int	color;
 
-int ft_rgb_to_int(int t, int r, int g, int b)
-{
-	int color = 0;
+	color = 0;
 	color |= b;
 	color |= g << 8;
 	color |= r << 16;
@@ -112,260 +119,63 @@ int ft_rgb_to_int(int t, int r, int g, int b)
 	return (color);
 }
 
-void ft_font_rainbow(t_vars *vars)
+int	ft_rainbow_color(t_vars *vars, int x)
 {
-	int color1 = 255, color2 = 0, color3 = 255;
-	int i = 0;
-	int j = 0;
-	int x = 0;
+	if (vars->img.color3 != 0 && x == 0)
+	{
+		vars->img.color3--;
+		if (vars->img.color3 == 0)
+			x++;
+	}
+	else if (vars->img.color2 != 255 && x == 1)
+		vars->img.color2++;
+	else if (vars->img.color1 != 0 && x == 1)
+		vars->img.color1--;
+	else if (vars->img.color3 != 255 && x == 1)
+	{
+		vars->img.color3++;
+		if (vars->img.color3 == 255)
+			x++;
+	}
+	else if (vars->img.color2 != 0 && x == 2)
+		vars->img.color2--;
+	else if (vars->img.color1 != 255 && x == 2)
+	{
+		vars->img.color1++;
+		if (vars->img.color1 == 255)
+			x = 0;
+	}
+	return (x);
+}
 
-	vars->img.img = mlx_new_image(vars->mlx, ((vars->map.height - 1) * 48), (vars->map.width * 48));
-	vars->img.addr = mlx_get_data_addr(vars->img.img, &vars->img.bits_per_pixel, &vars->img.line_length, &vars->img.endian);
-	while(i < ((vars->map.height - 1) * 48))
+void	ft_font_rainbow(t_vars *vars)
+{
+	int	i;
+	int	j;
+	int	x;
+
+	i = 0;
+	j = 0;
+	x = 0;
+	vars->img.color1 = 255;
+	vars->img.color2 = 0;
+	vars->img.color3 = 255;
+	while (i < ((vars->map.height) * 48))
 	{
 		while (j < (vars->map.width * 48))
 		{
-			my_mlx_pixel_put(&vars->img, i, j, ft_rgb_to_int(0, color1, color2, color3));
-			if (j %250 == 0)
-			{
-				if (color3 != 0 && x == 0)
-				{
-					color3--;
-					if (color3 == 0)
-						x++;
-				}
-				else if (color2 != 255 && x == 1)
-					color2++;
-				else if (color1 != 0 && x == 1)
-					color1--;
-				else if (color3 != 255 && x == 1)
-				{
-					color3++;
-					if (color3 == 255)
-						x++;
-				}
-				else if (color2 != 0 && x == 2)
-					color2--;
-				else if (color1 != 255 && x == 2)
-				{
-					color1++;
-					if (color1 == 255)
-						x = 0;
-				}
-			}
-			j++;
-		}
-		j = 0;
-		i++;
-	}
-/* 	double	ratio = (double)vars->test.width / (double)180;
-	int color = 0;
-	i = 0;
-	while (i < 180)
-	{
-		j = 0;
-		while (j < 180)
-		{
-			color = ft_get_color(&vars->test, j * ratio, i * ratio);
-			if (color != 0x0)
-				my_mlx_pixel_put(&vars->img, j + 0, i + 0, color);
-			j++;
-		}
-		i++;
-	} */
-//	double	ratio = (double)vars->test.width / (double)180;
-	mlx_put_image_to_window(vars->mlx, vars->win, vars->img.img, 0, 0);
-//	mlx_destroy_image(vars->mlx, vars->img.img);
-}
-
-int ft_render_next_frame(t_vars *vars)
-{
-	int i = 0, j = 0;
-	static int x = 0;
-	static int color1 = 255, color2 = 0, color3 = 255;
-	vars->img.img = mlx_new_image(vars->mlx, HEIGHT, WIDTH);
-	vars->img.addr = mlx_get_data_addr(vars->img.img, &vars->img.bits_per_pixel, &vars->img.line_length, &vars->img.endian);
-	if (color3 != 0 && x == 0)
-	{
-		color3--;
-		if (color3 == 0)
-			x++;
-	}
-	else if (color2 != 255 && x == 1)
-		color2++;
-	else if (color1 != 0 && x == 1)
-		color1--;
-	else if (color3 != 255 && x == 1)
-	{
-		color3++;
-		if (color3 == 255)
-			x++;
-	}
-	else if (color2 != 0 && x == 2)
-		color2--;
-	else if (color1 != 255 && x == 2)
-	{
-		color1++;
-		if (color1 == 255)
-			x = 0;
-	}
-	while(i < HEIGHT)
-	{
-		while (j < WIDTH)
-		{
-			my_mlx_pixel_put(&vars->img, i, j, ft_rgb_to_int(0, color1, color2, color3));
+			ft_my_mlx_pixel_put(&vars->img, i, j,
+				ft_rgb_to_int(0, vars->img.color1,
+					vars->img.color2, vars->img.color3));
+			if (j % 250 == 0)
+				x = ft_rainbow_color(vars, x);
 			j++;
 		}
 		j = 0;
 		i++;
 	}
 	mlx_put_image_to_window(vars->mlx, vars->win, vars->img.img, 0, 0);
-	mlx_destroy_image(vars->mlx, vars->img.img);
-	return (1);
 }
-
-void	ft_draw_line(t_vars *vars, int beginx, int beginy, int endx, int endy, int color)
-{
-	double deltax = endx - beginx;
-	double deltay = endy - beginy;
-	double pixelx = beginx;
-	double pixely = beginy;
-	int pixels = ft_sqrt((deltax * deltax) + (deltay * deltay));
-
-	deltax /= pixels;
-	deltay /= pixels;
-
-	vars->img.img = mlx_new_image(vars->mlx, 800, 500); // DRAW 1 IMAGE With FULL LiNE
-	vars->img.addr = mlx_get_data_addr(vars->img.img, &vars->img.bits_per_pixel, &vars->img.line_length, &vars->img.endian);
-	while (pixels)
-	{
-		my_mlx_pixel_put(&vars->img, pixelx, pixely, color);
-		pixelx += deltax;
-		pixely += deltay;
-		--pixels;
-	}
-	mlx_put_image_to_window(vars->mlx, vars->win, vars->img.img, 0, 0);
-	mlx_destroy_image(vars->mlx, vars->img.img);
-}
-
-void ft_draw_img_tmp(t_vars *vars, int pos)
-{
-	int i;
-	int j;
-
-	ft_printf("POS :%d\n", pos);
-	vars->img.img = mlx_new_image(vars->mlx, 800, 25);
-	vars->img.addr = mlx_get_data_addr(vars->img.img, &vars->img.bits_per_pixel, &vars->img.line_length, &vars->img.endian);
-	j = 0;
-	while (j <= 25)
-	{
-		i = 0;
-		while (i <= 400)
-		{
-			my_mlx_pixel_put(&vars->img, i, j, 0xFFFFFF00);
-			i++;
-		}
-		while (i >= 401 && i <= 800)
-		{
-			my_mlx_pixel_put(&vars->img, i, j, 0xFFFF00FF);
-			i++;
-		}
-		j++;
-	}
-	mlx_put_image_to_window(vars->mlx, vars->win, vars->img.img, 0, pos);
-	mlx_destroy_image(vars->mlx, vars->img.img);
-}
-
-void	ft_move_img(t_vars *vars, int key)
-{
-	int	i;
-	
-	ft_printf("vars->img.pos :%d\n", vars->img.pos);
-	if (key == 65364)
-	{
-		if (vars->img.pos <= 475){
-			vars->img.pos = vars->img.pos + 50;
-			i = vars->img.pos;
-			if (vars->img.pos <=500)
-				mlx_put_image_to_window(vars->mlx, vars->win, vars->img.img, 0, i);
-		}
-	}
-	if (key == 65362)
-	{
-		if (vars->img.pos >= 25)
-		{
-			vars->img.pos = vars->img.pos - 25;
-			i = vars->img.pos;
-			if (vars->img.pos >= 0)
-				ft_draw_img_tmp(vars, vars->img.pos);
-		}
-	}
-}
-
-void ft_draw_img_test(t_vars *vars)
-{
-	int i;
-	int j;
-
-	j = 0;
-	while (j <= 25)
-	{
-		i = 0;
-		while (i <= 400)
-		{
-			my_mlx_pixel_put(&vars->img, i, j, 0xFFFF00FF);
-			i++;
-		}
-		while (i >= 401 && i <= 800)
-		{
-			my_mlx_pixel_put(&vars->img, i, j, 0xFFFFFF00);
-			i++;
-		}
-		j++;
-	}
-	mlx_put_image_to_window(vars->mlx, vars->win, vars->img.img, 0, 0);
-}
-
-/* int	main(void)
-{
-	t_vars	vars;
-
-	ft_printf("0xFF000000 =%d\t0x00FF0000 =%d\t0x0000FF00 =%d\t0x000000FF =%d\t0x1FFFFFFF =%d\n", 0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF, 0x70000000);
-	ft_printf("0xFFFFFFFF =%d\t0xFFFFFF00 =%d\t0xFFFF0000 =%d\t0x0000FFFF =%d\n", 0xFFFFFFFF, 0xFFFFFF00, 0xFFFF0000, 0x0000FFFF);
-	ft_printf("0x00FFFF00 =%d\t0x00FF00FF =%d\t0xFF00FF00 =%d\t0x00FFFFFF =%d\n", 0x00FFFF00, 0x00FF00FF, 0x80000000, 0x7FFFFFFF);
-//	ft_printf("color =%d\n", ft_rgb_to_int(255, 0, 0, 0));
-
-	vars.mlx = mlx_init();
-	vars.win = mlx_new_window(vars.mlx, HEIGHT, WIDTH, "so_long");
-	vars.img.img = mlx_new_image(vars.mlx, 80, 50);
-	vars.img.addr = mlx_get_data_addr(vars.img.img, &vars.img.bits_per_pixel, &vars.img.line_length, &vars.img.endian);
-	my_mlx_pixel_put(&vars.img, 0, 0, 0xFFFFFFFF);
-	my_mlx_pixel_put(&vars.img, 0, 0, 0xFFFFFF00);
-	my_mlx_pixel_put(&vars.img, 10, 0, 0x00FFFFFF);
-	my_mlx_pixel_put(&vars.img, 20, 10, 0xFF00FFFF);
-	my_mlx_pixel_put(&vars.img, 30, 20, 0xFFFF00FF);
-	my_mlx_pixel_put(&vars.img, 40, 30, 0xFFFFFF00);
-	my_mlx_pixel_put(&vars.img, 50, 40, 0xFFFFFFFF);
-	my_mlx_pixel_put(&vars.img, 80, 50, 0xFFFFFFFF);
-	mlx_put_image_to_window(vars.mlx, vars.win, vars.img.img, 300, 200);
-	mlx_put_image_to_window(vars.mlx, vars.win, vars.img.img, 400, 300);
-	vars.pix.img = mlx_new_image(vars.mlx, 800, 25);
-	vars.pix.pos = 0;
-	vars.pix.addr = mlx_get_data_addr(vars.pix.img, &vars.pix.bits_per_pixel, &vars.pix.line_length, &vars.pix.endian);
-	ft_draw_img_test(&vars, 800, 500);
-	mlx_put_image_to_window(vars.mlx, vars.win, vars.img.img, 300, 200);
-	mlx_put_image_to_window(vars.mlx, vars.win, vars.img.img, 400, 300);
-	mlx_hook(vars.win, 2, 1L<<0, ft_keypress_event, &vars);
-	mlx_hook(vars.win, 17, 1L<<17, ft_close_event, &vars);
-	ft_font_rainbow(&vars);
-	ft_draw_circle(&vars);
-	mlx_pixel_put(vars.mlx, vars.win, 400, 250, 0x00000000);
-	mlx_loop_hook(vars.mlx, ft_render_next_frame, &vars);
-//	ft_render_next_frame(&vars);
-	mlx_loop(vars.mlx);
-	ft_stop_all(&vars);
-	return (0);
-} */
 
 int	ft_line_init_size(char *str)
 {
@@ -377,26 +187,29 @@ int	ft_line_init_size(char *str)
 	return (i);
 }
 
+void	ft_fd_error(t_vars *vars)
+{
+	ft_printf("%s\n", strerror(errno));
+	free(vars);
+	exit(EXIT_FAILURE);
+}
+
 int	ft_size_init_map(char *argv, t_vars *vars)
 {
-	int	fd;
-	int	i;
-	int	j;
-	char *str;
+	int		fd;
+	int		i;
+	int		j;
+	char	*str;
 
 	j = 0;
 	fd = open(argv, O_RDONLY);
 	if (fd == -1)
-	{
-		ft_printf("%s\n", strerror(errno));
-		free(vars);
-		exit(EXIT_FAILURE);
-	}
+		ft_fd_error(vars);
 	i = 0;
 	str = get_next_line(fd);
 	while (str)
 	{
-		if (ft_line_init_size(str) > 50)
+		if (ft_line_init_size(str) > 54)
 			j = -1;
 		free(str);
 		str = get_next_line(fd);
@@ -408,18 +221,14 @@ int	ft_size_init_map(char *argv, t_vars *vars)
 	return (i);
 }
 
-char **ft_init_map(char *argv, t_vars *vars, int j)
+char	**ft_init_map(char *argv, t_vars *vars, int j)
 {
 	int	fd;
 	int	i;
 
 	fd = open(argv, O_RDONLY);
 	if (fd == -1)
-	{
-		ft_printf("%s\n", strerror(errno));
-		free(vars);
-		exit(EXIT_FAILURE);
-	}
+		ft_fd_error(vars);
 	i = 0;
 	vars->map.map = (char **)malloc(sizeof(char *) * (j + 1));
 	if (!vars->map.map)
@@ -493,11 +302,14 @@ int	ft_west_offensive(int x, int y, t_vars *vars)
 	tmpx = x;
 	while (vars->map.map[tmpy][tmpx] != '1')
 	{
-		if (vars->map.map[tmpy][tmpx] == 'C' || vars->map.map[tmpy][tmpx] == 'E')
+		if (vars->map.map[tmpy][tmpx] == 'C'
+			|| vars->map.map[tmpy][tmpx] == 'E')
 			vars->map.items_find = vars->map.items_find + 1;
-		if (vars->map.map[tmpy - 1][tmpx] == 'C' || vars->map.map[tmpy - 1][tmpx] == 'E')
+		if (vars->map.map[tmpy - 1][tmpx] == 'C'
+			|| vars->map.map[tmpy - 1][tmpx] == 'E')
 			vars->map.items_find = vars->map.items_find + 1;
-		if (vars->map.map[tmpy + 1][tmpx] == 'C' || vars->map.map[tmpy + 1][tmpx] == 'E')
+		if (vars->map.map[tmpy + 1][tmpx] == 'C'
+			|| vars->map.map[tmpy + 1][tmpx] == 'E')
 			vars->map.items_find = vars->map.items_find + 1;
 		if (vars->map.map[tmpy][tmpx] != '1')
 			vars->map.map[tmpy][tmpx] = 'P';
@@ -519,11 +331,14 @@ int	ft_north_offensive(int x, int y, t_vars *vars)
 	tmpx = x;
 	while (vars->map.map[tmpy][tmpx] != '1')
 	{
-		if (vars->map.map[tmpy][tmpx] == 'C' || vars->map.map[tmpy][tmpx] == 'E')
+		if (vars->map.map[tmpy][tmpx] == 'C'
+			|| vars->map.map[tmpy][tmpx] == 'E')
 			vars->map.items_find = vars->map.items_find + 1;
-		if (vars->map.map[tmpy][tmpx - 1] == 'C' || vars->map.map[tmpy][tmpx - 1] == 'E')
+		if (vars->map.map[tmpy][tmpx - 1] == 'C'
+			|| vars->map.map[tmpy][tmpx - 1] == 'E')
 			vars->map.items_find = vars->map.items_find + 1;
-		if (vars->map.map[tmpy][tmpx + 1] == 'C' || vars->map.map[tmpy][tmpx + 1] == 'E')
+		if (vars->map.map[tmpy][tmpx + 1] == 'C'
+			|| vars->map.map[tmpy][tmpx + 1] == 'E')
 			vars->map.items_find = vars->map.items_find + 1;
 		if (vars->map.map[tmpy][tmpx] != '1')
 			vars->map.map[tmpy][tmpx] = 'P';
@@ -545,11 +360,14 @@ int	ft_east_offensive(int x, int y, t_vars *vars)
 	tmpx = x;
 	while (vars->map.map[tmpy][tmpx] != '1')
 	{
-		if (vars->map.map[tmpy][tmpx] == 'C' || vars->map.map[tmpy][tmpx] == 'E')
+		if (vars->map.map[tmpy][tmpx] == 'C'
+			|| vars->map.map[tmpy][tmpx] == 'E')
 			vars->map.items_find = vars->map.items_find + 1;
-		if (vars->map.map[tmpy - 1][tmpx] == 'C' || vars->map.map[tmpy - 1][tmpx] == 'E')
+		if (vars->map.map[tmpy - 1][tmpx] == 'C'
+			|| vars->map.map[tmpy - 1][tmpx] == 'E')
 			vars->map.items_find = vars->map.items_find + 1;
-		if (vars->map.map[tmpy + 1][tmpx] == 'C' || vars->map.map[tmpy + 1][tmpx] == 'E')
+		if (vars->map.map[tmpy + 1][tmpx] == 'C'
+			|| vars->map.map[tmpy + 1][tmpx] == 'E')
 			vars->map.items_find = vars->map.items_find + 1;
 		if (vars->map.map[tmpy][tmpx] != '1')
 			vars->map.map[tmpy][tmpx] = 'P';
@@ -571,11 +389,14 @@ int	ft_south_offensive(int x, int y, t_vars *vars)
 	tmpx = x;
 	while (vars->map.map[tmpy][tmpx] != '1')
 	{
-		if (vars->map.map[tmpy][tmpx] == 'C' || vars->map.map[tmpy][tmpx] == 'E')
+		if (vars->map.map[tmpy][tmpx] == 'C'
+			|| vars->map.map[tmpy][tmpx] == 'E')
 			vars->map.items_find = vars->map.items_find + 1;
-		if (vars->map.map[tmpy][tmpx - 1] == 'C' || vars->map.map[tmpy][tmpx - 1] == 'E')
+		if (vars->map.map[tmpy][tmpx - 1] == 'C'
+			|| vars->map.map[tmpy][tmpx - 1] == 'E')
 			vars->map.items_find = vars->map.items_find + 1;
-		if (vars->map.map[tmpy][tmpx + 1] == 'C' || vars->map.map[tmpy][tmpx + 1] == 'E')
+		if (vars->map.map[tmpy][tmpx + 1] == 'C'
+			|| vars->map.map[tmpy][tmpx + 1] == 'E')
 			vars->map.items_find = vars->map.items_find + 1;
 		if (vars->map.map[tmpy][tmpx] != '1')
 			vars->map.map[tmpy][tmpx] = 'P';
@@ -609,17 +430,19 @@ int	ft_invasion_checker(t_vars *vars)
 {
 	int	x;
 	int	y;
-	
+
 	y = 1;
 	while (y < vars->map.width - 1)
 	{
 		x = 1;
-		while (x < vars->map.height - 2)
+		while (x < vars->map.height - 1)
 		{
 			if (vars->map.map[y][x] == 'P')
 			{
-				if((vars->map.map[y][x - 1] != '1' && vars->map.map[y][x - 1] != 'P') || (vars->map.map[y][x + 1] != '1' && vars->map.map[y][x + 1] != 'P')
-				|| (vars->map.map[y - 1][x] != '1' && vars->map.map[y - 1][x] != 'P') || (vars->map.map[y + 1][x] != '1' && vars->map.map[y + 1][x] != 'P'))
+				if ((vars->map.map[y][x - 1] != '1' && vars->map.map[y][x - 1] != 'P')
+					|| (vars->map.map[y][x + 1] != '1' && vars->map.map[y][x + 1] != 'P')
+						|| (vars->map.map[y - 1][x] != '1' && vars->map.map[y - 1][x] != 'P')
+							|| (vars->map.map[y + 1][x] != '1' && vars->map.map[y + 1][x] != 'P'))
 					return (1);
 			}
 			x++;
@@ -638,18 +461,19 @@ int	ft_invasion_loop(t_vars *vars)
 	while (y < vars->map.width - 1)
 	{
 		x = 1;
-		while (x < vars->map.height - 2)
+		while (x < vars->map.height - 1)
 		{
 			if (vars->map.map[y][x] == 'P' && vars->map.items_find != vars->map.items)
 			{
-				if(vars->map.map[y][x - 1] != '1' || vars->map.map[y][x + 1] != '1' || vars->map.map[y - 1][x] != '1' || vars->map.map[y + 1][x] != '1')
+				if (vars->map.map[y][x - 1] != '1' || vars->map.map[y][x + 1] != '1' || vars->map.map[y - 1][x] != '1' || vars->map.map[y + 1][x] != '1')
 					vars->map.items_find = ft_invasion_propagation(x, y, vars);
 			}
 			x++;
 		}
 		y++;
 	}
-	if (ft_invasion_checker(vars) != 0 && vars->map.items_find != vars->map.items)
+	if (ft_invasion_checker(vars) != 0
+		&& vars->map.items_find != vars->map.items)
 		return (ft_invasion_loop(vars));
 	if (vars->map.items_find != vars->map.items)
 		ft_printf("Error\nNO VALABLE PATH - ALL ITEMS CANT BE FIND BY PLAYER\n");
@@ -662,7 +486,7 @@ int	ft_ctrl_map_size(t_vars *vars, int i)
 	int	dif;
 	int	line_size;
 
-	vars->map.height = ft_map_height(vars);
+	vars->map.height = ft_map_height(vars) - 1;
 	vars->map.width = ft_map_width(vars);
 	dif = 0;
 	while (vars->map.map[i])
@@ -716,8 +540,8 @@ int	ft_contour_map_control(t_vars *vars, int i)
 
 int	ft_elements_map_control(t_vars *vars)
 {
-	int	j;
-	int	k;
+	int		j;
+	int		k;
 	char	error;
 
 	j = 1;
@@ -795,81 +619,36 @@ char	**ft_strdup_test(char **src)
 	return (dest);
 }
 
-int ft_close_event(t_vars *vars)
+int	ft_close_event(t_vars *vars)
 {
 	ft_stop_all(vars);
-	ft_print_map(vars->map.map);
 	ft_clean_map(vars, 0);
 	free(vars);
+	ft_printf("Fin du SO_LONG V2!\n");
 	exit(0);
 }
-
-
-
-/* void	ft_init_draw_player(t_vars *vars, int x, int y)
-{
-//	vars->img.img = mlx_new_image(vars->mlx, ((vars->map.height - 1) * 64), (vars->map.width * 64));
-	int	i;
-	int	j;
-	int	color;
-	double	ratio = (double)vars->test.width / (double)40;
-
-	ft_printf("TEST4: %d\n", ratio);
-	i = 0;
-	while (i < 40)
-	{
-		j = 0;
-		while (j < 40)
-		{
-			color = ft_get_color(&vars->test, j * ratio, i * ratio);
-			if (color != 0x0)
-				my_mlx_pixel_put(&vars->img, j + x, i + y, color);
-			j++;
-		}
-		i++;
-	} */
-/* 	my_mlx_pixel_put(&vars->img, 10, 10, 0xFFFFFFFF);
-	my_mlx_pixel_put(&vars->img, 0, 0, ft_get_color(&vars->test, 50, 50)); */
-//	mlx_put_image_to_window(vars->mlx, vars->win, vars->img.img, 0, 0);
-//	mlx_put_image_to_window(vars->mlx, vars->win, vars->test.img, 0, 0);
-//	mlx_destroy_image(vars->mlx, vars->img.img);
-//}
-
-/* void	ft_init_draw_player(t_vars *vars, int x, int y)
-{
-//	vars->img.img = mlx_new_image(vars->mlx, ((vars->map.height - 1) * 64), (vars->map.width * 64));
-	vars->img.img = mlx_xpm_file_to_image(vars->mlx, "./textures/toto.xpm", &vars->map.w, &vars->map.h);
-	vars->img.addr = mlx_get_data_addr(vars->img.img, &vars->img.bits_per_pixel, &vars->img.line_length, &vars->img.endian);
-	ft_printf("vars->map.h :%d, vars->map.w :%d", vars->map.h, vars->map.w);
-	vars->map.h = x * vars->map.h;
-	vars->map.w = y * vars->map.w;
-	ft_printf("vars->map.h :%d, vars->map.w :%d", vars->map.h, vars->map.w);
-	mlx_put_image_to_window(vars->mlx, vars->win, vars->img.img, vars->map.h, vars->map.w);
-//	mlx_destroy_image(vars->mlx, vars->img.img);
-} */
 
 void	ft_init_draw_player(t_vars *vars, int x, int y)
 {
 	int	i;
 	int	j;
 	int	color;
-	
+
 	i = 0;
 	j = 0;
-	color = 0;	
+	color = 0;
 	while (i < 48)
 	{
 		j = 0;
 		while (j < 48)
 		{
 			color = ft_get_color(&vars->sheepl, j, i);
-			if (color != 0x0 || color == 0x00000000)
-				my_mlx_pixel_put(&vars->img, j + (x * 48), i + (y * 48), color);
+			ft_my_mlx_pixel_put(&vars->img, j + (x * 48), i + (y * 48), color);
 			j++;
 		}
 		i++;
 	}
-} 
+}
 
 void	ft_draw_player_right(t_vars *vars, int x, int y)
 {
@@ -879,218 +658,372 @@ void	ft_draw_player_right(t_vars *vars, int x, int y)
 	
 	i = 0;
 	j = 0;
-	color = 0;	
+	color = 0;
 	while (i < 48)
 	{
 		j = 0;
 		while (j < 48)
 		{
 			color = ft_get_color(&vars->sheepr, j, i);
-			if (color != 0x0 || color == 0x00000000)
-				my_mlx_pixel_put(&vars->img, j + (x * 48), i + (y * 48), color);
+			ft_my_mlx_pixel_put(&vars->img, j + (x * 48), i + (y * 48), color);
 			j++;
 		}
 		i++;
 	}
-} 
+}
 
 void	ft_draw_player_down(t_vars *vars, int x, int y)
 {
 	int	i;
 	int	j;
 	int	color;
-	
+
 	i = 0;
 	j = 0;
-	color = 0;	
+	color = 0;
 	while (i < 48)
 	{
 		j = 0;
 		while (j < 48)
 		{
 			color = ft_get_color(&vars->sheepb, j, i);
-			if (color != 0x0 || color == 0x00000000)
-				my_mlx_pixel_put(&vars->img, j + (x * 48), i + (y * 48), color);
+			ft_my_mlx_pixel_put(&vars->img, j + (x * 48), i + (y * 48), color);
 			j++;
 		}
 		i++;
 	}
-} 
+}
 
 void	ft_draw_player_up(t_vars *vars, int x, int y)
 {
 	int	i;
 	int	j;
 	int	color;
-	
+
 	i = 0;
 	j = 0;
-	color = 0;	
+	color = 0;
 	while (i < 48)
 	{
 		j = 0;
 		while (j < 48)
 		{
 			color = ft_get_color(&vars->sheeph, j, i);
-			if (color != 0x0 || color == 0x00000000)
-				my_mlx_pixel_put(&vars->img, j + (x * 48), i + (y * 48), color);
+			ft_my_mlx_pixel_put(&vars->img, j + (x * 48), i + (y * 48), color);
 			j++;
 		}
 		i++;
 	}
-} 
+}
 
 void	ft_init_draw_font(t_vars *vars, int x, int y)
 {
 	int	i;
 	int	j;
 	int	color;
-	
+
 	i = 0;
 	j = 0;
-	color = 0;	
+	color = 0;
 	while (i < 48)
 	{
 		j = 0;
 		while (j < 48)
 		{
 			color = ft_get_color(&vars->font, j, i);
-			if (color != 0x0)
-				my_mlx_pixel_put(&vars->img, j + (x * 48), i + (y * 48), color);
+			ft_my_mlx_pixel_put(&vars->img, j + (x * 48), i + (y * 48), color);
 			j++;
 		}
 		i++;
 	}
-} 
+}
 
 void	ft_init_draw_wall(t_vars *vars, int x, int y)
 {
 	int	i;
 	int	j;
 	int	color;
-	
+
 	i = 0;
 	j = 0;
-	color = 0;	
+	color = 0;
 	while (i < 48)
 	{
 		j = 0;
 		while (j < 48)
 		{
 			color = ft_get_color(&vars->wall, j, i);
-			if (color != 0x0)
-				my_mlx_pixel_put(&vars->img, j + (x * 48), i + (y * 48), color);
+			ft_my_mlx_pixel_put(&vars->img, j + (x * 48), i + (y * 48), color);
 			j++;
 		}
 		i++;
 	}
-} 
+}
 
 void	ft_init_draw_collectable(t_vars *vars, int x, int y)
 {
 	int	i;
 	int	j;
 	int	color;
-	
+
 	i = 0;
 	j = 0;
-	color = 0;	
+	color = 0;
 	while (i < 48)
 	{
 		j = 0;
 		while (j < 48)
 		{
 			color = ft_get_color(&vars->conso, j, i);
-			if (color != 0x0)
-				my_mlx_pixel_put(&vars->img, j + (x * 48), i + (y * 48), color);
+			ft_my_mlx_pixel_put(&vars->img, j + (x * 48), i + (y * 48), color);
 			j++;
 		}
 		i++;
 	}
-} 
+}
+
+void	ft_init_draw_collectable2(t_vars *vars, int x, int y)
+{
+	int	i;
+	int	j;
+	int	color;
+
+	i = 0;
+	j = 0;
+	color = 0;
+	while (i < 48)
+	{
+		j = 0;
+		while (j < 48)
+		{
+			color = ft_get_color(&vars->conso2, j, i);
+			ft_my_mlx_pixel_put(&vars->img, j + (x * 48), i + (y * 48), color);
+			j++;
+		}
+		i++;
+	}
+}
 
 void	ft_init_draw_exit(t_vars *vars, int x, int y)
 {
 	int	i;
 	int	j;
 	int	color;
-	
+
 	i = 0;
 	j = 0;
-	color = 0;	
+	color = 0;
 	while (i < 48)
 	{
 		j = 0;
 		while (j < 48)
 		{
 			color = ft_get_color(&vars->exit, j, i);
-			if (color != 0x0)
-				my_mlx_pixel_put(&vars->img, j + (x * 48), i + (y * 48), color);
+			ft_my_mlx_pixel_put(&vars->img, j + (x * 48), i + (y * 48), color);
 			j++;
 		}
 		i++;
 	}
-} 
+}
+
+void	ft_draw_map_new(t_vars *vars)
+{
+	int	x;
+	int	y;
+
+	y = 0;
+	while (vars->map.map[y])
+	{
+		x = 0;
+		while (vars->map.map[y][x])
+		{
+			if (vars->map.map[y][x] == '1')
+				ft_init_draw_wall(vars, x, y);
+			x++;
+		}
+		y++;
+	}
+	mlx_put_image_to_window(vars->mlx, vars->win, vars->img.img, 0, 0);
+}
+
+void	ft_draw_big_sheep(t_vars *vars, int x, int y)
+{
+	double		i;
+	double		j;
+	int			color;
+	double		ratio;
+
+	j = 0;
+	mlx_destroy_image(vars->mlx, vars->sheepb.img);
+	vars->sheepb.img = mlx_xpm_file_to_image(vars->mlx, "./textures/SheepYF.xpm", &vars->sheepb.width, &vars->sheepb.height);
+	vars->sheepb.addr = mlx_get_data_addr(vars->sheepb.img, &vars->sheepb.bits_per_pixel, &vars->sheepb.line_length, &vars->sheepb.endian);
+	ratio = ((double)vars->sheepb.width / (double)(((vars->map.height) * vars->map.width)));
+	x = x - (((vars->map.height) * vars->map.width) / 2);
+	y = y - (((vars->map.height) * vars->map.width) / 2);
+	while (j < (double)((vars->map.height) * vars->map.width))
+	{
+		i = 0;
+		while (i < (double)((vars->map.height) * vars->map.width))
+		{
+			color = ft_get_color(&vars->sheepb, i * ratio, j * ratio);
+			if (color != 0x000000FF)
+				ft_my_mlx_pixel_put(&vars->img, (x + i), (y + j), color);
+			i++;
+		}
+		j++;
+	}
+}
+
+void	ft_init_new_sprites(t_vars *vars)
+{
+	vars->wall.img = mlx_xpm_file_to_image(vars->mlx, "./textures/Tree2.xpm", &vars->wall.width, &vars->wall.height);
+	if (!vars->wall.img)
+		ft_close_event(vars);
+	vars->img.addr_use = vars->img.addr_use + 1;
+	vars->wall.addr = mlx_get_data_addr(vars->wall.img, &vars->wall.bits_per_pixel, &vars->wall.line_length, &vars->wall.endian);
+	vars->sheepl.img = mlx_xpm_file_to_image(vars->mlx, "./textures/SheepYCL.xpm", &vars->sheepl.width, &vars->sheepl.height);
+	if (!vars->sheepl.img)
+		ft_close_event(vars);
+	vars->img.addr_use = vars->img.addr_use + 1;
+	vars->sheepl.addr = mlx_get_data_addr(vars->sheepl.img, &vars->sheepl.bits_per_pixel, &vars->sheepl.line_length, &vars->sheepl.endian);
+	vars->sheepr.img = mlx_xpm_file_to_image(vars->mlx, "./textures/SheepYCR.xpm", &vars->sheepr.width, &vars->sheepr.height);
+	if (!vars->sheepr.img)
+		ft_close_event(vars);
+	vars->img.addr_use = vars->img.addr_use + 1;
+	vars->sheepr.addr = mlx_get_data_addr(vars->sheepr.img, &vars->sheepr.bits_per_pixel, &vars->sheepr.line_length, &vars->sheepr.endian);
+	vars->sheeph.img = mlx_xpm_file_to_image(vars->mlx, "./textures/SheepYCB.xpm", &vars->sheeph.width, &vars->sheeph.height);
+	if (!vars->sheeph.img)
+		ft_close_event(vars);
+	vars->img.addr_use = vars->img.addr_use + 1;
+	vars->sheeph.addr = mlx_get_data_addr(vars->sheeph.img, &vars->sheeph.bits_per_pixel, &vars->sheeph.line_length, &vars->sheeph.endian);
+	vars->sheepb.img = mlx_xpm_file_to_image(vars->mlx, "./textures/SheepYCF.xpm", &vars->sheepb.width, &vars->sheepb.height);
+	if (!vars->sheepb.img)
+		ft_close_event(vars);
+	vars->img.addr_use = vars->img.addr_use + 1;
+	vars->sheepb.addr = mlx_get_data_addr(vars->sheepb.img, &vars->sheepb.bits_per_pixel, &vars->sheepb.line_length, &vars->sheepb.endian);
+}
 
 void	ft_switch_player_image(t_vars *vars, int x, int y)
 {
 	if (vars->map.map[x][y] == 'C')
 	{
-		vars->sheepl.img = mlx_xpm_file_to_image(vars->mlx, "./textures/SheepYCL.xpm", &vars->sheepl.width , &vars->sheepl.height);
-		vars->sheepl.addr = mlx_get_data_addr(vars->sheepl.img, &vars->sheepl.bits_per_pixel, &vars->sheepl.line_length, &vars->sheepl.endian);
-		vars->sheepr.img = mlx_xpm_file_to_image(vars->mlx, "./textures/SheepYCR.xpm", &vars->sheepr.width , &vars->sheepr.height);
-		vars->sheepr.addr = mlx_get_data_addr(vars->sheepr.img, &vars->sheepr.bits_per_pixel, &vars->sheepr.line_length, &vars->sheepr.endian);
-		vars->sheepb.img = mlx_xpm_file_to_image(vars->mlx, "./textures/SheepYCF.xpm", &vars->sheepb.width , &vars->sheepb.height);
-		vars->sheepb.addr = mlx_get_data_addr(vars->sheepb.img, &vars->sheepb.bits_per_pixel, &vars->sheepb.line_length, &vars->sheepb.endian);
-		vars->sheeph.img = mlx_xpm_file_to_image(vars->mlx, "./textures/SheepYCB.xpm", &vars->sheeph.width , &vars->sheeph.height);
-		vars->sheeph.addr = mlx_get_data_addr(vars->sheeph.img, &vars->sheeph.bits_per_pixel, &vars->sheeph.line_length, &vars->sheeph.endian);
+		vars->map.items = vars->map.items + 1;
+		vars->map.map[x][y] = '0';
+	}
+	if (vars->map.map[x][y] == '2')
+	{
+		vars->map.items = vars->map.items + 1;
+		vars->img.addr_use = 5;
+		mlx_destroy_image(vars->mlx, vars->wall.img);
+		mlx_destroy_image(vars->mlx, vars->sheepl.img);
+		mlx_destroy_image(vars->mlx, vars->sheepr.img);
+		mlx_destroy_image(vars->mlx, vars->sheepb.img);
+		mlx_destroy_image(vars->mlx, vars->sheeph.img);
+		ft_init_new_sprites(vars);
+		ft_draw_map_new(vars);
 		vars->map.map[x][y] = '0';
 	}
 }
 
+void	ft_switch_end_game(t_vars *vars, int x, int y)
+{
+	int	i;
+	int	j;
+
+	i = (((vars->map.height) * vars->sheepb.height) / 2);
+	j = ((vars->map.width * vars->sheepb.width) / 2);
+	if (vars->map.map[x][y] == 'E' && vars->map.items == vars->map.items_find)
+	{
+		ft_font_rainbow(vars);
+		ft_draw_big_sheep(vars, i, j);
+		vars->map.status = 1;
+	}
+}
+
+int	ft_check_player_up(t_vars *vars)
+{
+	if (vars->map.map[vars->map.playery - 1][vars->map.playerx] == 'E' && vars->map.items != vars->map.items_find)
+		return (2);
+	if (vars->map.playery > 0 && vars->map.map[vars->map.playery - 1][vars->map.playerx] != '1')
+	{
+		ft_switch_player_image(vars, (vars->map.playery - 1), vars->map.playerx);
+		ft_init_draw_font(vars, vars->map.playerx, vars->map.playery);
+		vars->map.playery = vars->map.playery - 1;
+		ft_draw_player_up(vars, vars->map.playerx, vars->map.playery);
+		ft_switch_end_game(vars, (vars->map.playery), vars->map.playerx);
+		vars->key_count = vars->key_count + 1;
+		ft_printf("Move :%d\n", vars->key_count);
+		return (1);
+	}
+	return (0);
+}
+
+int	ft_check_player_down(t_vars *vars)
+{
+	if (vars->map.map[vars->map.playery + 1][vars->map.playerx] == 'E' && vars->map.items != vars->map.items_find)
+		return (2);
+	if (vars->map.playery < vars->map.width - 1 && vars->map.map[vars->map.playery + 1][vars->map.playerx] != '1')
+	{
+		ft_switch_player_image(vars, (vars->map.playery + 1), vars->map.playerx);
+		ft_init_draw_font(vars, vars->map.playerx, vars->map.playery);
+		vars->map.playery = vars->map.playery + 1;
+		ft_draw_player_down(vars, vars->map.playerx, vars->map.playery);
+		ft_switch_end_game(vars, (vars->map.playery), vars->map.playerx);
+		vars->key_count = vars->key_count + 1;
+		ft_printf("Move :%d\n", vars->key_count);
+		return (1);
+	}
+	return (0);
+}
+
+int	ft_check_player_right(t_vars *vars)
+{
+	if (vars->map.map[vars->map.playery][vars->map.playerx + 1] == 'E' && vars->map.items != vars->map.items_find)
+		return (2);
+	if (vars->map.playerx < vars->map.height - 1 && vars->map.map[vars->map.playery][vars->map.playerx + 1] != '1')
+	{
+		ft_switch_player_image(vars, vars->map.playery, (vars->map.playerx + 1));
+		ft_init_draw_font(vars, vars->map.playerx, vars->map.playery);
+		vars->map.playerx = vars->map.playerx + 1;
+		ft_draw_player_right(vars, vars->map.playerx, vars->map.playery);
+		ft_switch_end_game(vars, vars->map.playery, (vars->map.playerx));
+		vars->key_count = vars->key_count + 1;
+		ft_printf("Move :%d\n", vars->key_count);
+		return (1);
+	}
+	return (0);
+}
+
+int	ft_check_player_left(t_vars *vars)
+{
+	if (vars->map.map[vars->map.playery][vars->map.playerx - 1] == 'E' && vars->map.items != vars->map.items_find)
+		return (2);
+	if (vars->map.playerx > 0 && vars->map.map[vars->map.playery][vars->map.playerx - 1] != '1')
+	{
+		ft_switch_player_image(vars, vars->map.playery, (vars->map.playerx - 1));
+		ft_init_draw_font(vars, vars->map.playerx, vars->map.playery);
+		vars->map.playerx = vars->map.playerx - 1;
+		ft_init_draw_player(vars, vars->map.playerx, vars->map.playery);
+		ft_switch_end_game(vars, vars->map.playery, (vars->map.playerx));
+		vars->key_count = vars->key_count + 1;
+		ft_printf("Move :%d\n", vars->key_count);
+		return (1);
+	}
+	return (0);
+}
+
 void	ft_draw_player(t_vars *vars, int key)
 {
-	if (key == 119 || key == 65362) //w
-	{
-		if (vars->map.playery > 0 && vars->map.map[vars->map.playery - 1][vars->map.playerx] != '1')
-		{
-			ft_switch_player_image(vars, (vars->map.playery - 1), vars->map.playerx);
-			ft_init_draw_font(vars, vars->map.playerx, vars->map.playery);
-			vars->map.playery = vars->map.playery - 1;
-			ft_draw_player_up(vars, vars->map.playerx, vars->map.playery);
-		}
-	}
-	if (key == 115 || key == 65364) //s
-	{
-		if (vars->map.playery < vars->map.width - 1 && vars->map.map[vars->map.playery + 1][vars->map.playerx] != '1')
-		{
-			ft_switch_player_image(vars, (vars->map.playery + 1), vars->map.playerx);
-			ft_init_draw_font(vars, vars->map.playerx, vars->map.playery);
-			vars->map.playery = vars->map.playery + 1;
-			ft_draw_player_down(vars, vars->map.playerx, vars->map.playery);
-		}
-	}
-	if (key == 100 || key == 65363) //d
-	{
-		if (vars->map.playerx < vars->map.height - 2 && vars->map.map[vars->map.playery][vars->map.playerx + 1] != '1')
-		{
-			ft_switch_player_image(vars, vars->map.playery, (vars->map.playerx + 1));
-			ft_init_draw_font(vars, vars->map.playerx, vars->map.playery);
-			vars->map.playerx = vars->map.playerx + 1;
-			ft_draw_player_right(vars, vars->map.playerx, vars->map.playery);
-		}
-	}
-	if (key == 97 || key == 65361) //a
-	{
-		if (vars->map.playerx > 0 && vars->map.map[vars->map.playery][vars->map.playerx - 1] != '1')
-		{
-			ft_switch_player_image(vars, vars->map.playery, (vars->map.playerx - 1));
-			ft_init_draw_font(vars, vars->map.playerx, vars->map.playery);
-			vars->map.playerx = vars->map.playerx - 1;
-			ft_init_draw_player(vars, vars->map.playerx, vars->map.playery);
-		}
-	}
-	mlx_put_image_to_window(vars->mlx, vars->win, vars->img.img, vars->map.h, vars->map.w);
+	if ((key == 119 || key == 65362) && vars->map.status == 0)
+		key = ft_check_player_up(vars);
+	if ((key == 115 || key == 65364) && vars->map.status == 0)
+		key = ft_check_player_down(vars);
+	if ((key == 100 || key == 65363) && vars->map.status == 0)
+		key = ft_check_player_right(vars);
+	if ((key == 97 || key == 65361) && vars->map.status == 0)
+		key = ft_check_player_left(vars);
+	if (key == 1)
+		mlx_put_image_to_window(vars->mlx, vars->win, vars->img.img, vars->map.h, vars->map.w);
 }
 
 void	ft_init_draws(t_vars *vars, int x, int y, char c)
@@ -1098,11 +1031,21 @@ void	ft_init_draws(t_vars *vars, int x, int y, char c)
 	if (c == '1')
 		ft_init_draw_wall(vars, x, y);
 	if (c == 'P')
+	{
+		vars->map.playerx = x;
+		vars->map.playery = y;
 		ft_init_draw_player(vars, x, y);
+	}
 	if (c == '0')
 		ft_init_draw_font(vars, x, y);
-	if (c == 'C')
+	if (c == 'C' && vars->map.conso == 0)
+	{
 		ft_init_draw_collectable(vars, x, y);
+		vars->map.map[y][x] = '2';
+		vars->map.conso = 1;
+	}
+	else if (c == 'C')
+		ft_init_draw_collectable2(vars, x, y);
 	if (c == 'E')
 		ft_init_draw_exit(vars, x, y);
 	mlx_put_image_to_window(vars->mlx, vars->win, vars->img.img, vars->map.h, vars->map.w);
@@ -1110,31 +1053,17 @@ void	ft_init_draws(t_vars *vars, int x, int y, char c)
 
 int	ft_keypress_event(int key, t_vars *vars)
 {
-	ft_printf("Key = %d\n", key);
-	if (key == 65362){ft_draw_player(vars, key);} //haut
-	if (key == 65364){ft_draw_player(vars, key);} //bas
-	if (key == 65363){ft_draw_player(vars, key);} //droite
-	if (key == 65361){ft_draw_player(vars, key);} //gauche
-	if (key == 119){ft_draw_player(vars, key);} //w
-	if (key == 115){ft_draw_player(vars, key);} //s
-	if (key == 100){ft_draw_player(vars, key);} //d
-	if (key == 97){ft_draw_player(vars, key);} //a
-	if (key == 65307) //echap
+	if (key == 65362 || key == 119)
+		ft_draw_player(vars, key);
+	if (key == 65364 || key == 115)
+		ft_draw_player(vars, key);
+	if (key == 65363 || key == 100)
+		ft_draw_player(vars, key);
+	if (key == 65361 || key == 97)
+		ft_draw_player(vars, key);
+	if (key == 65307)
 		ft_close_event(vars);
 	return (0);
-}
-
-void	ft_draw_walls(t_vars *vars, int x, int y)
-{
-//	vars->img.img = mlx_new_image(vars->mlx, ((vars->map.height - 1) * 64), (vars->map.width * 64));
-	vars->img.img = mlx_xpm_file_to_image(vars->mlx, "./textures/wall.xpm", &vars->map.w, &vars->map.h);
-	vars->img.addr = mlx_get_data_addr(vars->img.img, &vars->img.bits_per_pixel, &vars->img.line_length, &vars->img.endian);
-	ft_printf("vars->map.h :%d, vars->map.w :%d", vars->map.h, vars->map.w);
-	vars->map.h = x * vars->map.h;
-	vars->map.w = y * vars->map.w;
-	ft_printf("vars->map.h :%d, vars->map.w :%d", vars->map.h, vars->map.w);
-	mlx_put_image_to_window(vars->mlx, vars->win, vars->img.img, vars->map.h, vars->map.w);
-//	mlx_destroy_image(vars->mlx, vars->img.img);
 }
 
 void	ft_draw_map(t_vars *vars)
@@ -1149,19 +1078,15 @@ void	ft_draw_map(t_vars *vars)
 		while (vars->map.map[y][x])
 		{
 			if (vars->map.map[y][x] == '1')
-				ft_init_draws(vars, x , y, '1');
+				ft_init_draws(vars, x, y, '1');
 			if (vars->map.map[y][x] == 'P')
-			{
-				vars->map.playerx = x;
-				vars->map.playery = y;
-				ft_init_draws(vars, x , y, 'P');
-			}
+				ft_init_draws(vars, x, y, 'P');
 			if (vars->map.map[y][x] == '0')
-				ft_init_draws(vars, x , y, '0');
+				ft_init_draws(vars, x, y, '0');
 			if (vars->map.map[y][x] == 'C')
-				ft_init_draws(vars, x , y, 'C');
+				ft_init_draws(vars, x, y, 'C');
 			if (vars->map.map[y][x] == 'E')
-				ft_init_draws(vars, x , y, 'E');
+				ft_init_draws(vars, x, y, 'E');
 			x++;
 		}
 		y++;
@@ -1169,24 +1094,68 @@ void	ft_draw_map(t_vars *vars)
 	mlx_put_image_to_window(vars->mlx, vars->win, vars->img.img, 0, 0);
 }
 
-void	ft_init_sprites(t_vars *vars)
+void	ft_init_sprites_part1(t_vars *vars)
 {
-	vars->font.img = mlx_xpm_file_to_image(vars->mlx, "./textures/Grass.xpm", &vars->font.width , &vars->font.height);
+	vars->font.img = mlx_xpm_file_to_image(vars->mlx, "./textures/Grass.xpm", &vars->font.width, &vars->font.height);
+	if (!vars->font.img)
+		ft_close_event(vars);
+	vars->img.addr_use = vars->img.addr_use + 1;
 	vars->font.addr = mlx_get_data_addr(vars->font.img, &vars->font.bits_per_pixel, &vars->font.line_length, &vars->font.endian);
-	vars->wall.img = mlx_xpm_file_to_image(vars->mlx, "./textures/Tree2.xpm", &vars->wall.width , &vars->wall.height);
-	vars->wall.addr = mlx_get_data_addr(vars->wall.img, &vars->wall.bits_per_pixel, &vars->wall.line_length, &vars->wall.endian);
-	vars->sheepl.img = mlx_xpm_file_to_image(vars->mlx, "./textures/SheepL.xpm", &vars->sheepl.width , &vars->sheepl.height);
-	vars->sheepl.addr = mlx_get_data_addr(vars->sheepl.img, &vars->sheepl.bits_per_pixel, &vars->sheepl.line_length, &vars->sheepl.endian);
-	vars->sheepr.img = mlx_xpm_file_to_image(vars->mlx, "./textures/SheepR.xpm", &vars->sheepr.width , &vars->sheepr.height);
-	vars->sheepr.addr = mlx_get_data_addr(vars->sheepr.img, &vars->sheepr.bits_per_pixel, &vars->sheepr.line_length, &vars->sheepr.endian);
-	vars->sheepb.img = mlx_xpm_file_to_image(vars->mlx, "./textures/SheepF.xpm", &vars->sheepb.width , &vars->sheepb.height);
-	vars->sheepb.addr = mlx_get_data_addr(vars->sheepb.img, &vars->sheepb.bits_per_pixel, &vars->sheepb.line_length, &vars->sheepb.endian);
-	vars->sheeph.img = mlx_xpm_file_to_image(vars->mlx, "./textures/SheepB.xpm", &vars->sheeph.width , &vars->sheeph.height);
-	vars->sheeph.addr = mlx_get_data_addr(vars->sheeph.img, &vars->sheeph.bits_per_pixel, &vars->sheeph.line_length, &vars->sheeph.endian);
-	vars->conso.img = mlx_xpm_file_to_image(vars->mlx, "./textures/YCombi.xpm", &vars->conso.width , &vars->conso.height);
+	vars->conso.img = mlx_xpm_file_to_image(vars->mlx, "./textures/YCombi.xpm", &vars->conso.width, &vars->conso.height);
+	if (!vars->conso.img)
+		ft_close_event(vars);
+	vars->img.addr_use = vars->img.addr_use + 1;
 	vars->conso.addr = mlx_get_data_addr(vars->conso.img, &vars->conso.bits_per_pixel, &vars->conso.line_length, &vars->conso.endian);
-	vars->exit.img = mlx_xpm_file_to_image(vars->mlx, "./textures/Shower.xpm", &vars->exit.width , &vars->exit.height);
+	vars->conso2.img = mlx_xpm_file_to_image(vars->mlx, "./textures/BFlowerConso.xpm", &vars->conso2.width, &vars->conso2.height);
+	if (!vars->conso2.img)
+		ft_close_event(vars);
+	vars->img.addr_use = vars->img.addr_use + 1;
+	vars->conso2.addr = mlx_get_data_addr(vars->conso2.img, &vars->conso2.bits_per_pixel, &vars->conso2.line_length, &vars->conso2.endian);
+	vars->exit.img = mlx_xpm_file_to_image(vars->mlx, "./textures/Shower1.xpm", &vars->exit.width, &vars->exit.height);
+	if (!vars->exit.img)
+		ft_close_event(vars);
+	vars->img.addr_use = vars->img.addr_use + 1;
 	vars->exit.addr = mlx_get_data_addr(vars->exit.img, &vars->exit.bits_per_pixel, &vars->exit.line_length, &vars->exit.endian);
+	vars->wall.img = mlx_xpm_file_to_image(vars->mlx, "./textures/Tree.xpm", &vars->wall.width, &vars->wall.height);
+	if (!vars->wall.img)
+		ft_close_event(vars);
+	vars->img.addr_use = vars->img.addr_use + 1;
+	vars->wall.addr = mlx_get_data_addr(vars->wall.img, &vars->wall.bits_per_pixel, &vars->wall.line_length, &vars->wall.endian);
+}
+
+void	ft_init_sprites_part2(t_vars *vars)
+{
+	vars->sheepl.img = mlx_xpm_file_to_image(vars->mlx, "./textures/SheepL.xpm", &vars->sheepl.width, &vars->sheepl.height);
+	if (!vars->sheepl.img)
+		ft_close_event(vars);
+	vars->img.addr_use = vars->img.addr_use + 1;
+	vars->sheepl.addr = mlx_get_data_addr(vars->sheepl.img, &vars->sheepl.bits_per_pixel, &vars->sheepl.line_length, &vars->sheepl.endian);
+	vars->sheepr.img = mlx_xpm_file_to_image(vars->mlx, "./textures/SheepR.xpm", &vars->sheepr.width, &vars->sheepr.height);
+	if (!vars->sheepr.img)
+		ft_close_event(vars);
+	vars->img.addr_use = vars->img.addr_use + 1;
+	vars->sheepr.addr = mlx_get_data_addr(vars->sheepr.img, &vars->sheepr.bits_per_pixel, &vars->sheepr.line_length, &vars->sheepr.endian);
+	vars->sheeph.img = mlx_xpm_file_to_image(vars->mlx, "./textures/SheepB.xpm", &vars->sheeph.width, &vars->sheeph.height);
+	if (!vars->sheeph.img)
+		ft_close_event(vars);
+	vars->img.addr_use = vars->img.addr_use + 1;
+	vars->sheeph.addr = mlx_get_data_addr(vars->sheeph.img, &vars->sheeph.bits_per_pixel, &vars->sheeph.line_length, &vars->sheeph.endian);
+	vars->sheepb.img = mlx_xpm_file_to_image(vars->mlx, "./textures/SheepF.xpm", &vars->sheepb.width, &vars->sheepb.height);
+	if (!vars->sheepb.img)
+		ft_close_event(vars);
+	vars->img.addr_use = vars->img.addr_use + 1;
+	vars->sheepb.addr = mlx_get_data_addr(vars->sheepb.img, &vars->sheepb.bits_per_pixel, &vars->sheepb.line_length, &vars->sheepb.endian);
+}
+
+void	ft_init_data(t_vars *vars)
+{
+	vars->map.items = 2;
+	vars->img.addr_use = 1;
+	vars->map.status = 0;
+	vars->map.conso = 0;
+	vars->key_count = 0;
+	ft_init_sprites_part1(vars);
+	ft_init_sprites_part2(vars);
 }
 
 void	ft_init_window(char *argv, t_vars *vars)
@@ -1197,75 +1166,50 @@ void	ft_init_window(char *argv, t_vars *vars)
 	j = ft_size_init_map(argv, vars);
 	vars->map.map = ft_init_map(argv, vars, j);
 	vars->mlx = mlx_init();
-	vars->win = mlx_new_window(vars->mlx, ((vars->map.height - 1) * 48), (vars->map.width * 48), "so_long");
-	vars->img.img = mlx_new_image(vars->mlx, ((vars->map.height - 1) * 48), (vars->map.width * 48));
+	vars->win = mlx_new_window(vars->mlx, ((vars->map.height) * 48), (vars->map.width * 48), "so_long");
+	vars->img.img = mlx_new_image(vars->mlx, ((vars->map.height) * 48), (vars->map.width * 48));
 	vars->img.addr = mlx_get_data_addr(vars->img.img, &vars->img.bits_per_pixel, &vars->img.line_length, &vars->img.endian);
-	mlx_hook(vars->win, 2, 1L<<0, ft_keypress_event, vars);
-	mlx_hook(vars->win, 17, 1L<<17, ft_close_event, vars);
-	ft_init_sprites(vars);
-//	ft_font_rainbow(vars);
+	mlx_hook(vars->win, 2, 1L << 0, ft_keypress_event, vars);
+	mlx_hook(vars->win, 17, 1L << 17, ft_close_event, vars);
+	ft_init_data(vars);
 	ft_draw_map(vars);
-//	ft_draw_walls(vars, 0 , 0);
 	mlx_loop(vars->mlx);
-//	mlx_destroy_image(vars->mlx, vars->img.img);
+	mlx_destroy_image(vars->mlx, vars->img.img);
 	mlx_destroy_window(vars->mlx, vars->win);
 	mlx_destroy_display(vars->mlx);
 	free(vars->mlx);
 }
 
-/* void	ft_init_window(char *argv, t_vars *vars)
-{
-	int	j;
-
-	j = 0;
-	j = ft_size_init_map(argv, vars);
-	vars->map.map = ft_init_map(argv, vars, j);
-	vars->mlx = mlx_init();
-	vars->win = mlx_new_window(vars->mlx, ((vars->map.height - 1) * 64), (vars->map.width * 64), "so_long");
-	vars->win = mlx_new_window(vars->mlx, ((vars->map.height - 1) * 64), (vars->map.width * 64), "so_long");
-	
-	mlx_hook(vars->win, 2, 1L<<0, ft_keypress_event, vars);
-	mlx_hook(vars->win, 17, 1L<<17, ft_close_event, vars);
-	ft_draw_map(vars);
-//	ft_draw_walls(vars, 0 , 0);
-	mlx_loop(vars->mlx);
-//	mlx_destroy_image(vars->mlx, vars->img.img);
-	mlx_destroy_window(vars->mlx, vars->win);
-	mlx_destroy_display(vars->mlx);
-	free(vars->mlx);
-} */
-
-int ft_parsing_map(char *argv, t_vars *vars)
+int	ft_parsing_map(char *argv, t_vars *vars)
 {
 	int		i;
 	int		j;
-	
+
 	i = 0;
 	j = 0;
 	j = ft_size_init_map(argv, vars);
-	if	(j > 20 || j == -1)
+	if (j > 28 || j == -1)
 	{
-		if (j > 20)
+		if (j > 28)
 			ft_printf("Error\nMAP WIDTH IS TO BIG\n");
 		else
 			ft_printf("Error\nMAP HEIGHT IS TO BIG\n");
 		ft_exit_map(vars, i);
 	}
 	vars->map.map = ft_init_map(argv, vars, j);
-	ft_print_map(vars->map.map); //
+	ft_print_map(vars->map.map);
 	i = ft_ctrl_map_size(vars, i);
 	if (ft_contour_map_control(vars, i) != 0 || ft_elements_map_control(vars) != 0
-	|| ft_control_items(vars) == 0 || ft_invasion_loop(vars) != vars->map.items)
+		|| ft_control_items(vars) == 0 || ft_invasion_loop(vars) != vars->map.items)
 		ft_exit_map(vars, i);
 	ft_clean_map(vars, i);
 	return (i);
 }
 
-
 int	main(int argc, char **argv)
 {
-	int	j;
-	t_vars *vars;
+	int		j;
+	t_vars	*vars;
 
 	if (argc == 2)
 	{
@@ -1274,9 +1218,7 @@ int	main(int argc, char **argv)
 			return (0);
 		ft_printf("Debut du SO_LONG!\n");
 		j = ft_parsing_map(argv[1], vars);
-		ft_printf("HEIGHT :%d et WIDTH :%d\n", vars->map.height, vars->map.width);
 		ft_init_window(argv[1], vars);
-		ft_print_map(vars->map.map);
 		ft_clean_map(vars, 0);
 		free(vars);
 		ft_printf("Fin du SO_LONG! J=%d\n", j);
