@@ -6,7 +6,7 @@
 #    By: chillion <chillion@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/09/01 12:07:22 by chillion          #+#    #+#              #
-#    Updated: 2022/09/24 14:20:00 by chillion         ###   ########.fr        #
+#    Updated: 2022/10/01 18:46:16 by chillion         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -37,6 +37,17 @@ CYAN = \033[0;36m
 NC = \033[0m
 
 SRCS = so_long.c	\
+	so_long_attack.c	\
+	so_long_close.c	\
+	so_long_color.c	\
+	so_long_draw.c	\
+	so_long_draw_end.c	\
+	so_long_init_data_move.c	\
+	so_long_items_checker.c	\
+	so_long_map_checker.c	\
+	so_long_map_init.c	\
+	so_long_move_checker.c	\
+	so_long_path_checker.c	\
 
 #SRCS = ${wildcard *.c}
 
@@ -76,7 +87,7 @@ ${LIBFT} :
 
 ${NAME} : ${OBJ}
 # 	/*** TEMPORAIRE ***/
-	${RM} -f ${SOFT_NAME} 
+#	${RM} -f ${SOFT_NAME} 
 # 	/*** TEMPORAIRE ***/
 	@echo "${BLUE}###${NC}Update de l'archive ${NAME}${BLUE}###${MAGENTA}"
 	${AR} ${NAME} ${MLX} ${OBJ}
