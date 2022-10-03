@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   so_long_move_checker.c                             :+:      :+:    :+:   */
+/*   so_long_move_checker_bonus.c                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: chillion <chillion@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/01 18:35:23 by chillion          #+#    #+#             */
-/*   Updated: 2022/10/03 17:32:56 by chillion         ###   ########.fr       */
+/*   Updated: 2022/10/03 17:31:50 by chillion         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "so_long.h"
+#include "so_long_bonus.h"
 
 int	ft_check_player_up(t_v *v)
 {

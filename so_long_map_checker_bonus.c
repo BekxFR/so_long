@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   so_long_map_checker.c                              :+:      :+:    :+:   */
+/*   so_long_map_checker_bonus.c                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: chillion <chillion@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/01 18:25:18 by chillion          #+#    #+#             */
-/*   Updated: 2022/10/03 17:32:52 by chillion         ###   ########.fr       */
+/*   Updated: 2022/10/03 17:31:44 by chillion         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "so_long.h"
+#include "so_long_bonus.h"
 
 int	ft_ctrl_map_size(t_v *v, int i)
 {

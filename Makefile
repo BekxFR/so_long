@@ -6,16 +6,16 @@
 #    By: chillion <chillion@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/09/01 12:07:22 by chillion          #+#    #+#              #
-#    Updated: 2022/10/01 18:46:16 by chillion         ###   ########.fr        #
+#    Updated: 2022/10/03 18:35:51 by chillion         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 .PHONY : all test lldb bonus norm clean fclean re
 
 NAME := so_long.a
-#NAME_BONUS := checker.a
+NAME_BONUS := so_long_bonus.a
 SOFT_NAME := so_long
-#SOFT_BONUS := checker
+SOFT_BONUS := so_long_bonus
 
 CC := gcc
 FLAGS := -g3 -Wall -Wextra -Werror -I includes/
@@ -51,18 +51,18 @@ SRCS = so_long.c	\
 
 #SRCS = ${wildcard *.c}
 
-BONUS = checker.c	\
-	checker_tools.c	\
-	checker_tools_do.c	\
-	push_swap_tools_sp.c	\
-	push_swap_tools_r.c	\
-	push_swap_tools_rr.c	\
-	push_swap_tools.c	\
-	push_swap_check.c	\
-	push_swap_pos.c	\
-	push_swap_pull.c	\
-	push_swap_switch.c	\
-	push_swap_cost.c	\
+BONUS = so_long_bonus.c	\
+	so_long_attack_bonus.c	\
+	so_long_close_bonus.c	\
+	so_long_color_bonus.c	\
+	so_long_draw_bonus.c	\
+	so_long_draw_end_bonus.c	\
+	so_long_init_data_move_bonus.c	\
+	so_long_items_checker_bonus.c	\
+	so_long_map_checker_bonus.c	\
+	so_long_map_init_bonus.c	\
+	so_long_move_checker_bonus.c	\
+	so_long_path_checker_bonus.c	\
 
 LIBFT := libs/libft/libft.a
 MLX := libs/minilibx-linux/libmlx_Linux.a
@@ -106,16 +106,19 @@ ${SOFT_NAME} :
 $(OBJF) :
 	@mkdir -p ${OBJ_DIR}
 
-bonus : ${FLIB} ${BOBJ} ${NAME_BONUS} ${SOFT_BONUS}
+bonus : ${LIBFT} ${BOBJ} ${NAME_BONUS} ${SOFT_BONUS}
 
 ${NAME_BONUS} : ${BOBJ}
+# 	/*** TEMPORAIRE ***/
+	${RM} -f ${SOFT_BONUS} 
+# 	/*** TEMPORAIRE ***/
 	@echo "${BLUE}###${NC}Update de l'archive ${NAME_BONUS}${BLUE}###${MAGENTA}"
 	${AR} ${NAME_BONUS} ${BOBJ}
 	@echo "${NC}"
 
 ${SOFT_BONUS} :
 	@echo "${BLUE}###${NC}Creation du fichier ${SOFT_BONUS}${BLUE}###${ORANGE}"
-	${CC} ${FLAGS} -g3 -o ${SOFT_BONUS} ${NAME_BONUS} ${FLIB}
+	${CC} ${NAME_BONUS} ${LIBFT} ${FLAGS} ${MLXFLAGS} -o ${SOFT_BONUS} 
 	@echo "${NC}"
 
 test : all
@@ -124,6 +127,10 @@ test : all
 lldb :
 	${CC} -g3 ${SRCS} ${LIBFT} ${MLXFLAGS} -o ${SOFT_NAME}
 	lldb ./${SOFT_NAME} "basic.ber"
+
+lldbb :
+	${CC} -g3 ${BONUS} ${LIBFT} ${MLXFLAGS} -o ${SOFT_BONUS}
+	lldb ./${SOFT_BONUS} "basic.ber"
 
 clean : 
 	${FCLIB}

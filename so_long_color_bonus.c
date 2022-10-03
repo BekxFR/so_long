@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   so_long_color.c                                    :+:      :+:    :+:   */
+/*   so_long_color_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: chillion <chillion@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/01 18:11:48 by chillion          #+#    #+#             */
-/*   Updated: 2022/10/03 17:32:41 by chillion         ###   ########.fr       */
+/*   Updated: 2022/10/03 17:32:04 by chillion         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "so_long.h"
+#include "so_long_bonus.h"
 
 void	ft_my_mlx_pixel_put(t_data *data, int x, int y, int color)
 {

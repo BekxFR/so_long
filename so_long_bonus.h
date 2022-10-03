@@ -1,17 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   so_long.h                                          :+:      :+:    :+:   */
+/*   so_long_bonus.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: chillion <chillion@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/01 16:30:49 by chillion          #+#    #+#             */
-/*   Updated: 2022/10/03 10:39:08 by chillion         ###   ########.fr       */
+/*   Updated: 2022/10/03 16:46:26 by chillion         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef SO_LONG_H
-# define SO_LONG_H
+#ifndef SO_LONG_BONUS_H
+# define SO_LONG_BONUS_H
 
 # include <fcntl.h>
 # include <errno.h>
@@ -45,6 +45,7 @@ typedef struct s_map
 	int		py;
 	int		conso;
 	int		status;
+	int		pp;
 	int		its;
 	int		itsf;
 }	t_map;
@@ -54,6 +55,7 @@ typedef struct s_vars
 	void	*mlx;
 	void	*win;
 	int		key_count;
+	int		frame;
 	t_data	ig;
 	t_data	bg;
 	t_data	wa;
@@ -61,9 +63,16 @@ typedef struct s_vars
 	t_data	sr;
 	t_data	sb;
 	t_data	sh;
+	t_data	sl2;
+	t_data	sr2;
+	t_data	sb2;
+	t_data	sh2;
 	t_data	c1;
+	t_data	c12;
 	t_data	c2;
+	t_data	c22;
 	t_data	ex;
+	t_data	ex2;
 	t_map	m;
 }	t_v;
 
