@@ -6,7 +6,7 @@
 /*   By: chillion <chillion@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/01 16:30:49 by chillion          #+#    #+#             */
-/*   Updated: 2022/10/03 16:46:26 by chillion         ###   ########.fr       */
+/*   Updated: 2022/10/04 15:21:24 by chillion         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,9 +43,12 @@ typedef struct s_map
 	int		h;
 	int		px;
 	int		py;
+	int		nx;
+	int		ny;
 	int		conso;
 	int		status;
 	int		pp;
+	int		np;
 	int		its;
 	int		itsf;
 }	t_map;
@@ -55,6 +58,7 @@ typedef struct s_vars
 	void	*mlx;
 	void	*win;
 	int		key_count;
+	int		render_waiting;
 	int		frame;
 	t_data	ig;
 	t_data	bg;
@@ -73,6 +77,10 @@ typedef struct s_vars
 	t_data	c22;
 	t_data	ex;
 	t_data	ex2;
+	t_data	n1;
+	t_data	n12;
+	t_data	n2;
+	t_data	n22;
 	t_map	m;
 }	t_v;
 
@@ -131,7 +139,7 @@ void			ft_draw_map_new(t_v *v);
 
 /* so_long_draw_end */
 void			ft_init_big_sheep(t_v *v);
-void			ft_draw_big_sheep(t_v *v, int x, int y);
+void			ft_draw_big_sheep(t_v *v, t_data sprite, int x, int y);
 void			ft_init_new_sprites(t_v *v);
 void			ft_switch_player_image(t_v *v, int x, int y);
 void			ft_switch_end_game(t_v *v, int x, int y);

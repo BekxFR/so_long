@@ -6,7 +6,7 @@
 #    By: chillion <chillion@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/09/01 12:07:22 by chillion          #+#    #+#              #
-#    Updated: 2022/10/03 18:35:51 by chillion         ###   ########.fr        #
+#    Updated: 2022/10/04 15:32:56 by chillion         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -113,7 +113,7 @@ ${NAME_BONUS} : ${BOBJ}
 	${RM} -f ${SOFT_BONUS} 
 # 	/*** TEMPORAIRE ***/
 	@echo "${BLUE}###${NC}Update de l'archive ${NAME_BONUS}${BLUE}###${MAGENTA}"
-	${AR} ${NAME_BONUS} ${BOBJ}
+	${AR} ${NAME_BONUS} ${MLX} ${BOBJ}
 	@echo "${NC}"
 
 ${SOFT_BONUS} :

@@ -6,7 +6,7 @@
 /*   By: chillion <chillion@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/01 18:25:18 by chillion          #+#    #+#             */
-/*   Updated: 2022/10/03 17:31:44 by chillion         ###   ########.fr       */
+/*   Updated: 2022/10/04 12:50:54 by chillion         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,7 @@ int	ft_elements_map_control(t_v *v)
 		{
 			if (v->m.map[j][k] != '1' && v->m.map[j][k] != '0'
 				&& v->m.map[j][k] != 'P' && v->m.map[j][k] != 'E'
-					&& v->m.map[j][k] != 'C')
+					&& v->m.map[j][k] != 'C' && v->m.map[j][k] != 'N')
 			{
 				error = v->m.map[j][k];
 				break ;

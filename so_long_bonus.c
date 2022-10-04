@@ -6,7 +6,7 @@
 /*   By: chillion <chillion@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/09 10:56:42 by chillion          #+#    #+#             */
-/*   Updated: 2022/10/03 18:48:29 by chillion         ###   ########.fr       */
+/*   Updated: 2022/10/04 18:51:09 by chillion         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,13 @@ void	ft_init_draws2(t_v *v, int x, int y, char c)
 		ft_init_draw_sprite(v, v->c12, x, y);
 	if (c == 'E')
 		ft_init_draw_sprite(v, v->ex2, x, y);
+	if (c == 'N')
+	{
+		if (v->m.np == 0)
+			ft_init_draw_sprite(v, v->n1, x, y);
+		if (v->m.np == 1)
+			ft_init_draw_sprite(v, v->n2, x, y);
+	}
 }
 
 void	ft_init_draws1(t_v *v, int x, int y, char c)
@@ -56,6 +63,13 @@ void	ft_init_draws1(t_v *v, int x, int y, char c)
 		ft_init_draw_sprite(v, v->c1, x, y);
 	if (c == 'E')
 		ft_init_draw_sprite(v, v->ex, x, y);
+	if (c == 'N')
+	{
+		if (v->m.np == 0)
+			ft_init_draw_sprite(v, v->n12, x, y);
+		if (v->m.np == 1)
+			ft_init_draw_sprite(v, v->n22, x, y);
+	}
 }
 
 void	ft_draw_refresh2(t_v *v)
@@ -77,6 +91,8 @@ void	ft_draw_refresh2(t_v *v)
 				ft_init_draws2(v, x, y, 'C');
 			if (v->m.map[y][x] == 'E')
 				ft_init_draws2(v, x, y, 'E');
+			if (v->m.map[y][x] == 'N')
+				ft_init_draws2(v, x, y, 'N');
 			x++;
 		}
 		y++;
@@ -103,6 +119,8 @@ void	ft_draw_refresh1(t_v *v)
 				ft_init_draws1(v, x, y, 'C');
 			if (v->m.map[y][x] == 'E')
 				ft_init_draws1(v, x, y, 'E');
+			if (v->m.map[y][x] == 'N')
+				ft_init_draws1(v, x, y, 'N');
 			x++;
 		}
 		y++;
@@ -133,22 +151,22 @@ void	ft_init_sprites_part3(t_v *v)
 	v->ig.addr_use = v->ig.addr_use + 1;
 	v->sb.ad = mlx_get_data_addr(v->sb.img, &v->sb.bpp, &v->sb.llen, &v->sb.en);
 
-	v->sl2.img = mlx_xpm_file_to_image(v->mlx, "tx/SL2.xpm", &v->sl2.w, &v->sl2.h);
+	v->sl2.img = mlx_xpm_file_to_image(v->mlx, "tx/SL12.xpm", &v->sl2.w, &v->sl2.h);
 	if (!v->sl2.img)
 		ft_close_event(v);
 	v->ig.addr_use = v->ig.addr_use + 1;
 	v->sl2.ad = mlx_get_data_addr(v->sl2.img, &v->sl2.bpp, &v->sl2.llen, &v->sl2.en);
-	v->sr2.img = mlx_xpm_file_to_image(v->mlx, "tx/SR2.xpm", &v->sr2.w, &v->sr2.h);
+	v->sr2.img = mlx_xpm_file_to_image(v->mlx, "tx/SR12.xpm", &v->sr2.w, &v->sr2.h);
 	if (!v->sr2.img)
 		ft_close_event(v);
 	v->ig.addr_use = v->ig.addr_use + 1;
 	v->sr2.ad = mlx_get_data_addr(v->sr2.img, &v->sr2.bpp, &v->sr2.llen, &v->sr2.en);
-	v->sh2.img = mlx_xpm_file_to_image(v->mlx, "tx/SB2.xpm", &v->sh2.w, &v->sh2.h);
+	v->sh2.img = mlx_xpm_file_to_image(v->mlx, "tx/SB12.xpm", &v->sh2.w, &v->sh2.h);
 	if (!v->sh2.img)
 		ft_close_event(v);
 	v->ig.addr_use = v->ig.addr_use + 1;
 	v->sh2.ad = mlx_get_data_addr(v->sh2.img, &v->sh2.bpp, &v->sh2.llen, &v->sh2.en);
-	v->sb2.img = mlx_xpm_file_to_image(v->mlx, "tx/SF2.xpm", &v->sb2.w, &v->sb2.h);
+	v->sb2.img = mlx_xpm_file_to_image(v->mlx, "tx/SF12.xpm", &v->sb2.w, &v->sb2.h);
 	if (!v->sb2.img)
 		ft_close_event(v);
 	v->ig.addr_use = v->ig.addr_use + 1;
@@ -169,12 +187,34 @@ void	ft_init_sprites_part3(t_v *v)
 		ft_close_event(v);
 	v->ig.addr_use = v->ig.addr_use + 1;
 	v->c22.ad = mlx_get_data_addr(v->c22.img, &v->c22.bpp, &v->c22.llen, &v->c22.en);
+
+	v->n1.img = mlx_xpm_file_to_image(v->mlx, "tx/N1.xpm", &v->n1.w, &v->n1.h);
+	if (!v->n1.img)
+		ft_close_event(v);
+	v->ig.addr_use = v->ig.addr_use + 1;
+	v->n1.ad = mlx_get_data_addr(v->n1.img, &v->n1.bpp, &v->n1.llen, &v->n1.en);
+	v->n12.img = mlx_xpm_file_to_image(v->mlx, "tx/N12.xpm", &v->n12.w, &v->n12.h);
+	if (!v->n12.img)
+		ft_close_event(v);
+	v->ig.addr_use = v->ig.addr_use + 1;
+	v->n12.ad = mlx_get_data_addr(v->n12.img, &v->n12.bpp, &v->n12.llen, &v->n12.en);
+	v->n2.img = mlx_xpm_file_to_image(v->mlx, "tx/N2.xpm", &v->n2.w, &v->n2.h);
+	if (!v->n2.img)
+		ft_close_event(v);
+	v->ig.addr_use = v->ig.addr_use + 1;
+	v->n2.ad = mlx_get_data_addr(v->n2.img, &v->n2.bpp, &v->n2.llen, &v->n2.en);
+	v->n22.img = mlx_xpm_file_to_image(v->mlx, "tx/N22.xpm", &v->n22.w, &v->n22.h);
+	if (!v->n22.img)
+		ft_close_event(v);
+	v->ig.addr_use = v->ig.addr_use + 1;
+	v->n22.ad = mlx_get_data_addr(v->n22.img, &v->n22.bpp, &v->n22.llen, &v->n22.en);
 }
 
 void	ft_init_data2(t_v *v)
 {
 	v->m.its = 2;
 	v->m.pp = 0;
+	v->m.np = 0;
 	v->ig.addr_use = 1;
 	v->m.status = 0;
 	v->m.conso = 0;
@@ -190,41 +230,165 @@ void	str_menu_data(t_v *v)
 	mlx_string_put(v->mlx, v->win, 40, 12, 0x00000000, ft_itoa(v->key_count));
 }
 
+void	ft_anim_end_game(t_v *v, t_data sprite)
+{
+	int	i;
+	int	j;
+
+	i = (((v->m.h) * v->sb.h) / 2);
+	j = ((v->m.w * v->sb.w) / 2);
+	ft_font_rainbow(v);
+	ft_draw_big_sheep(v, sprite, i, j);
+	mlx_put_image_to_window(v->mlx, v->win, v->ig.img, 0, 0);
+}
+
 int	ft_anim(t_v *v)
 {
-	ft_printf("TEST 4 :%d\n", v->frame);
-//	sleep (1);
-	if (v->frame == 0)
+	v->render_waiting += 1; 
+	if (v->frame == 0 && v->render_waiting == 10000)
 	{
-		ft_printf("TEST 5 :%d\n", v->frame);
+		v->render_waiting = 0;
 		v->frame = 1;
 		ft_draw_refresh2(v);
 	}
-	else if (v->frame == 1)
+	else if (v->frame == 1 && v->render_waiting == 10000)
 	{
+		v->render_waiting = 0;
 		v->frame = 0;
 		ft_draw_refresh1(v);
 	}
+	if (v->frame == 3 && v->render_waiting == 10000)
+	{
+		v->render_waiting = 0;
+		v->frame = 4;
+		ft_anim_end_game(v, v->sl);
+	}
+	else if (v->frame == 4 && v->render_waiting == 10000)
+	{
+		v->render_waiting = 0;
+		v->frame = 3;
+		ft_anim_end_game(v, v->sl2);
+	}
+	if (v->frame == 5 && v->render_waiting == 10000)
+	{
+		v->render_waiting = 0;
+		v->frame = 6;
+		ft_anim_end_game(v, v->n1);
+	}
+	else if (v->frame == 6 && v->render_waiting == 10000)
+	{
+		v->render_waiting = 0;
+		v->frame = 5;
+		ft_anim_end_game(v, v->n12);
+	}
 	str_menu_data(v);
 	return (1);
+}
+
+int	ft_check_cat_up2(t_v *v)
+{
+	if (v->m.map[v->m.ny - 1][v->m.px] == 'E' && v->m.its != v->m.itsf)
+		return (2);
+	if (v->m.map[v->m.ny - 1][v->m.px] == 'N')
+		return (3);
+	if (v->m.ny > 0 && v->m.map[v->m.ny - 1][v->m.px] != '1')
+	{
+		ft_switch_player_image(v, (v->m.ny - 1), v->m.px);
+		ft_init_draw_sprite(v, v->bg, v->m.px, v->m.ny);
+		v->m.ny = v->m.ny - 1;
+		v->m.map[v->m.ny][v->m.px] = 'P';
+		v->m.map[v->m.ny + 1][v->m.px] = '0';
+		if (v->m.np == 0)
+			ft_init_draw_sprite(v, v->n1, v->m.nx, v->m.ny);
+		else
+			ft_init_draw_sprite(v, v->n2, v->m.nx, v->m.ny);
+		return (1);
+	}
+	return (0);
+}
+
+int	ft_check_cat_down2(t_v *v)
+{
+	if (v->m.map[v->m.ny + 1][v->m.nx] == 'E' && v->m.its != v->m.itsf)
+		return (2);
+	if (v->m.map[v->m.ny + 1][v->m.nx] == 'N')
+		return (3);
+	if (v->m.ny < v->m.w - 1 && v->m.map[v->m.ny + 1][v->m.nx] != '1')
+	{
+		ft_switch_player_image(v, (v->m.ny + 1), v->m.nx);
+		ft_init_draw_sprite(v, v->bg, v->m.nx, v->m.ny);
+		v->m.ny = v->m.ny + 1;
+		v->m.map[v->m.ny][v->m.nx] = 'P';
+		v->m.map[v->m.ny - 1][v->m.nx] = '0';
+		if (v->m.np == 0)
+			ft_init_draw_sprite(v, v->n1, v->m.nx, v->m.ny);
+		else
+			ft_init_draw_sprite(v, v->n2, v->m.nx, v->m.ny);
+		return (1);
+	}
+	return (0);
+}
+
+int	ft_check_cat_right2(t_v *v)
+{
+	if (v->m.map[v->m.ny][v->m.nx + 1] == 'E')
+		return (2);
+	if (v->m.map[v->m.ny][v->m.nx + 1] == 'P')
+		return (3);
+	if (v->m.nx < v->m.h - 1 && v->m.map[v->m.ny][v->m.nx + 1] != '1')
+	{
+		v->m.np = 1;
+		ft_switch_player_image(v, v->m.ny, (v->m.nx + 1));
+		ft_init_draw_sprite(v, v->bg, v->m.nx, v->m.ny);
+		v->m.nx = v->m.nx + 1;
+		v->m.map[v->m.ny][v->m.nx] = 'N';
+		v->m.map[v->m.ny][v->m.nx - 1] = '0';
+		ft_init_draw_sprite(v, v->n2, v->m.nx, v->m.ny);
+		return (1);
+	}
+	return (0);
+}
+
+int	ft_check_cat_left2(t_v *v)
+{
+	if (v->m.map[v->m.ny][v->m.nx - 1] == 'E')
+		return (2);
+	if (v->m.map[v->m.ny][v->m.nx - 1] == 'N')
+		return (3);
+	if (v->m.nx > 0 && v->m.map[v->m.ny][v->m.nx - 1] != '1')
+	{
+		v->m.np = 0;
+		ft_switch_player_image(v, v->m.ny, (v->m.nx - 1));
+		ft_init_draw_sprite(v, v->bg, v->m.nx, v->m.ny);
+		v->m.nx = v->m.nx - 1;
+		v->m.map[v->m.ny][v->m.nx] = 'N';
+		v->m.map[v->m.ny][v->m.nx + 1] = '0';
+		ft_init_draw_sprite(v, v->n1, v->m.nx, v->m.ny);
+		return (1);
+	}
+	return (0);
 }
 
 int	ft_check_player_up2(t_v *v)
 {
 	if (v->m.map[v->m.py - 1][v->m.px] == 'E' && v->m.its != v->m.itsf)
 		return (2);
+	if (v->m.map[v->m.py - 1][v->m.px] == 'N')
+		return (3);
 	if (v->m.py > 0 && v->m.map[v->m.py - 1][v->m.px] != '1')
 	{
 		v->m.pp = 3;
 		ft_switch_player_image(v, (v->m.py - 1), v->m.px);
 		ft_init_draw_sprite(v, v->bg, v->m.px, v->m.py);
-		v->m.map[v->m.py - 1][v->m.px] = 'P';
-		v->m.map[v->m.py][v->m.px] = '0';
 		v->m.py = v->m.py - 1;
-		ft_init_draw_sprite(v, v->sh, v->m.px, v->m.py);
 		ft_switch_end_game(v, (v->m.py), v->m.px);
+		if (v->m.status != 1)
+		{
+			v->m.map[v->m.py][v->m.px] = 'P';
+			v->m.map[v->m.py + 1][v->m.px] = '0';
+			ft_init_draw_sprite(v, v->sh, v->m.px, v->m.py);
+		}
 		v->key_count = v->key_count + 1;
-		ft_printf("Move :%d\n", v->key_count);
 		return (1);
 	}
 	return (0);
@@ -234,18 +398,22 @@ int	ft_check_player_down2(t_v *v)
 {
 	if (v->m.map[v->m.py + 1][v->m.px] == 'E' && v->m.its != v->m.itsf)
 		return (2);
+	if (v->m.map[v->m.py + 1][v->m.px] == 'N')
+		return (3);
 	if (v->m.py < v->m.w - 1 && v->m.map[v->m.py + 1][v->m.px] != '1')
 	{
 		v->m.pp = 2;
 		ft_switch_player_image(v, (v->m.py + 1), v->m.px);
 		ft_init_draw_sprite(v, v->bg, v->m.px, v->m.py);
-		v->m.map[v->m.py + 1][v->m.px] = 'P';
-		v->m.map[v->m.py][v->m.px] = '0';
 		v->m.py = v->m.py + 1;
-		ft_init_draw_sprite(v, v->sb, v->m.px, v->m.py);
 		ft_switch_end_game(v, (v->m.py), v->m.px);
+		if (v->m.status != 1)
+		{
+			v->m.map[v->m.py][v->m.px] = 'P';
+			v->m.map[v->m.py - 1][v->m.px] = '0';
+			ft_init_draw_sprite(v, v->sb, v->m.px, v->m.py);
+		}
 		v->key_count = v->key_count + 1;
-		ft_printf("Move :%d\n", v->key_count);
 		return (1);
 	}
 	return (0);
@@ -255,18 +423,22 @@ int	ft_check_player_right2(t_v *v)
 {
 	if (v->m.map[v->m.py][v->m.px + 1] == 'E' && v->m.its != v->m.itsf)
 		return (2);
+	if (v->m.map[v->m.py][v->m.px + 1] == 'N')
+		return (3);
 	if (v->m.px < v->m.h - 1 && v->m.map[v->m.py][v->m.px + 1] != '1')
 	{
 		v->m.pp = 1;
 		ft_switch_player_image(v, v->m.py, (v->m.px + 1));
 		ft_init_draw_sprite(v, v->bg, v->m.px, v->m.py);
-		v->m.map[v->m.py][v->m.px + 1] = 'P';
-		v->m.map[v->m.py][v->m.px] = '0';
 		v->m.px = v->m.px + 1;
-		ft_init_draw_sprite(v, v->sr, v->m.px, v->m.py);
 		ft_switch_end_game(v, v->m.py, (v->m.px));
+		if (v->m.status != 1)
+		{
+			v->m.map[v->m.py][v->m.px] = 'P';
+			v->m.map[v->m.py][v->m.px - 1] = '0';
+			ft_init_draw_sprite(v, v->sr, v->m.px, v->m.py);
+		}
 		v->key_count = v->key_count + 1;
-		ft_printf("Move :%d\n", v->key_count);
 		return (1);
 	}
 	return (0);
@@ -276,6 +448,8 @@ int	ft_check_player_left2(t_v *v)
 {
 	if (v->m.map[v->m.py][v->m.px - 1] == 'E' && v->m.its != v->m.itsf)
 		return (2);
+	if (v->m.map[v->m.py][v->m.px - 1] == 'N')
+		return (3);
 	if (v->m.px > 0 && v->m.map[v->m.py][v->m.px - 1] != '1')
 	{
 		v->m.pp = 0;
@@ -283,14 +457,47 @@ int	ft_check_player_left2(t_v *v)
 		ft_init_draw_sprite(v, v->bg, v->m.px, v->m.py);
 		v->m.px = v->m.px - 1;
 		ft_switch_end_game(v, v->m.py, (v->m.px));
-		v->m.map[v->m.py][v->m.px] = 'P';
-		v->m.map[v->m.py][v->m.px + 1] = '0';
-		ft_init_draw_sprite(v, v->sl, v->m.px, v->m.py);
+		if (v->m.status != 1)
+		{
+			v->m.map[v->m.py][v->m.px] = 'P';
+			v->m.map[v->m.py][v->m.px + 1] = '0';
+			ft_init_draw_sprite(v, v->sl, v->m.px, v->m.py);
+		}
 		v->key_count = v->key_count + 1;
-		ft_printf("Move :%d\n", v->key_count);
 		return (1);
 	}
 	return (0);
+}
+
+void	ft_init_big_cat(t_v *v)
+{
+	v->ig.addr_use = 9;
+	mlx_destroy_image(v->mlx, v->n1.img);
+	v->n1.img = mlx_xpm_file_to_image(v->mlx, "tx/NF1.xpm", &v->n1.w, &v->n1.h);
+	if (!v->n1.img)
+		ft_close_event(v);
+	v->ig.addr_use = v->ig.addr_use + 1;
+	v->n1.ad = mlx_get_data_addr(v->n1.img, &v->n1.bpp, &v->n1.llen, &v->n1.en);
+	mlx_destroy_image(v->mlx, v->n12.img);
+	v->n12.img = mlx_xpm_file_to_image(v->mlx, "tx/NF2.xpm", &v->n12.w, &v->n12.h);
+	if (!v->n12.img)
+		ft_close_event(v);
+	v->ig.addr_use = v->ig.addr_use + 1;
+	v->n12.ad = mlx_get_data_addr(v->n12.img, &v->n12.bpp, &v->n12.llen, &v->n12.en);
+}
+
+void	ft_switch_bad_end_game(t_v *v, t_data sprite)
+{
+	int	i;
+	int	j;
+
+	i = (((v->m.h) * v->sb.h) / 2);
+	j = ((v->m.w * v->sb.w) / 2);
+	v->frame = 5;
+	ft_font_rainbow(v);
+	ft_init_big_cat(v);
+	ft_draw_big_sheep(v, sprite, i, j);
+	v->m.status = 1;
 }
 
 void	ft_draw_player2(t_v *v, int key)
@@ -305,6 +512,11 @@ void	ft_draw_player2(t_v *v, int key)
 		key = ft_check_player_left2(v);
 	if (key == 1)
 		mlx_put_image_to_window(v->mlx, v->win, v->ig.img, 0, 0);
+	if (key == 3)
+	{
+		ft_switch_bad_end_game(v, v->n1);
+		mlx_put_image_to_window(v->mlx, v->win, v->ig.img, 0, 0);
+	}
 }
 
 int	ft_keypress_event2(int key, t_v *v)
@@ -335,8 +547,11 @@ void	ft_init_window(char *argv, t_v *v)
 	v->ig.ad = mlx_get_data_addr(v->ig.img, &v->ig.bpp, &v->ig.llen, &v->ig.en);
 	mlx_hook(v->win, 2, 1L << 0, ft_keypress_event2, v);
 	mlx_hook(v->win, 17, 1L << 17, ft_close_event, v);
+	ft_printf("TEST ULT1\n");
 	ft_init_data2(v);
+	ft_printf("TEST ULT2\n");
 	ft_draw_map(v);
+	ft_printf("TEST ULT3\n");
 	mlx_loop_hook(v->mlx, ft_anim, v);
 	mlx_loop(v->mlx);
 	mlx_destroy_image(v->mlx, v->ig.img);
@@ -380,7 +595,9 @@ int	main(int argc, char **argv)
 		v = (t_v *)malloc(sizeof(t_v));
 		if (!v)
 			return (0);
+		ft_printf("TEST ULTA\n");
 		ft_parsing_map(argv[1], v);
+		ft_printf("TEST ULTB\n");
 		ft_init_window(argv[1], v);
 		ft_clean_map(v, 0);
 		free(v);

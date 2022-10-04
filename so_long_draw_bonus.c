@@ -6,7 +6,7 @@
 /*   By: chillion <chillion@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/01 18:41:03 by chillion          #+#    #+#             */
-/*   Updated: 2022/10/03 17:58:32 by chillion         ###   ########.fr       */
+/*   Updated: 2022/10/04 12:23:14 by chillion         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,8 @@ void	ft_init_draws(t_v *v, int x, int y, char c)
 	}
 	if (c == '0')
 		ft_init_draw_sprite(v, v->bg, x, y);
+	if (c == 'N')
+		ft_init_draw_sprite(v, v->n1, x, y);
 	if (c == 'C' && v->m.conso == 0)
 	{
 		ft_init_draw_sprite(v, v->c1, x, y);
@@ -94,6 +96,8 @@ void	ft_draw_map(t_v *v)
 				ft_init_draws(v, x, y, 'C');
 			if (v->m.map[y][x] == 'E')
 				ft_init_draws(v, x, y, 'E');
+			if (v->m.map[y][x] == 'N')
+				ft_init_draws(v, x, y, 'N');
 			x++;
 		}
 		y++;
