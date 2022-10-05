@@ -6,13 +6,13 @@
 /*   By: chillion <chillion@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/01 18:11:19 by chillion          #+#    #+#             */
-/*   Updated: 2022/10/03 17:46:35 by chillion         ###   ########.fr       */
+/*   Updated: 2022/10/05 16:02:54 by chillion         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "so_long_bonus.h"
 
-void	ft_stop_all(t_v *v)
+void	ft_stop_part1(t_v *v)
 {
 	if (v->ig.addr_use >= 1 && v->ig.img)
 		mlx_destroy_image(v->mlx, v->ig.img);
@@ -24,16 +24,44 @@ void	ft_stop_all(t_v *v)
 		mlx_destroy_image(v->mlx, v->c2.img);
 	if (v->ig.addr_use >= 5 && v->ex.img)
 		mlx_destroy_image(v->mlx, v->ex.img);
-	if (v->ig.addr_use >= 6 && v->wa.img)
+	if (v->ig.addr_use >= 6 && v->ex2.img)
+		mlx_destroy_image(v->mlx, v->ex2.img);
+	if (v->ig.addr_use >= 7 && v->c12.img)
+		mlx_destroy_image(v->mlx, v->c12.img);
+}
+
+void	ft_stop_part2(t_v *v)
+{
+	if (v->ig.addr_use >= 8 && v->c22.img)
+		mlx_destroy_image(v->mlx, v->c22.img);
+	if (v->ig.addr_use >= 9 && v->wa.img)
 		mlx_destroy_image(v->mlx, v->wa.img);
-	if (v->ig.addr_use >= 7 && v->sl.img)
+	if (v->ig.addr_use >= 10 && v->sl.img)
 		mlx_destroy_image(v->mlx, v->sl.img);
-	if (v->ig.addr_use >= 8 && v->sr.img)
+	if (v->ig.addr_use >= 11 && v->sr.img)
 		mlx_destroy_image(v->mlx, v->sr.img);
-	if (v->ig.addr_use >= 9 && v->sh.img)
+	if (v->ig.addr_use >= 12 && v->sh.img)
 		mlx_destroy_image(v->mlx, v->sh.img);
-	if (v->ig.addr_use >= 10 && v->sb.img)
+	if (v->ig.addr_use >= 13 && v->sl2.img)
+		mlx_destroy_image(v->mlx, v->sl2.img);
+	if (v->ig.addr_use >= 14 && v->sr2.img)
+		mlx_destroy_image(v->mlx, v->sr2.img);
+}
+
+void	ft_stop_all(t_v *v)
+{
+	ft_stop_part1(v);
+	ft_stop_part2(v);
+	if (v->ig.addr_use >= 15 && v->sh2.img)
+		mlx_destroy_image(v->mlx, v->sh2.img);
+	if (v->ig.addr_use >= 16 && v->sb.img)
 		mlx_destroy_image(v->mlx, v->sb.img);
+	if ((v->ig.addr_use >= 17 || v->ig.free_status >= 2) && v->sb2.img)
+		mlx_destroy_image(v->mlx, v->sb2.img);
+	if ((v->ig.addr_use >= 18 || v->ig.free_status >= 2) && v->n1.img)
+		mlx_destroy_image(v->mlx, v->n1.img);
+	if ((v->ig.addr_use >= 19 || v->ig.free_status >= 2) && v->n12.img)
+		mlx_destroy_image(v->mlx, v->n12.img);
 	mlx_destroy_window(v->mlx, v->win);
 	mlx_destroy_display(v->mlx);
 	free(v->mlx);

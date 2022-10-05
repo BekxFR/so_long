@@ -6,7 +6,7 @@
 /*   By: chillion <chillion@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/01 18:31:59 by chillion          #+#    #+#             */
-/*   Updated: 2022/10/03 18:50:46 by chillion         ###   ########.fr       */
+/*   Updated: 2022/10/05 16:55:15 by chillion         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,6 @@ int	ft_control_its(t_v *v)
 	int	player;
 	int	conso;
 
-	//v->m.its = 0;
 	exit = ft_control_item(v, 'E');
 	player = ft_control_item(v, 'P');
 	conso = ft_control_item(v, 'C');

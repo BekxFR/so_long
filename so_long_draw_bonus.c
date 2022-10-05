@@ -6,7 +6,7 @@
 /*   By: chillion <chillion@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/01 18:41:03 by chillion          #+#    #+#             */
-/*   Updated: 2022/10/04 12:23:14 by chillion         ###   ########.fr       */
+/*   Updated: 2022/10/05 16:37:28 by chillion         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,11 @@ void	ft_draw_player(t_v *v, int key)
 		key = ft_check_player_left(v);
 	if (key == 1)
 		mlx_put_image_to_window(v->mlx, v->win, v->ig.img, 0, 0);
+	if (key == 3)
+	{
+		ft_switch_bad_end_game(v, v->n1);
+		mlx_put_image_to_window(v->mlx, v->win, v->ig.img, 0, 0);
+	}
 }
 
 void	ft_init_draws(t_v *v, int x, int y, char c)
@@ -75,6 +80,14 @@ void	ft_init_draws(t_v *v, int x, int y, char c)
 	mlx_put_image_to_window(v->mlx, v->win, v->ig.img, 0, 0);
 }
 
+void	ft_draw_map_part1(t_v *v, int x, int y)
+{
+	if (v->m.map[y][x] == 'E')
+		ft_init_draws(v, x, y, 'E');
+	if (v->m.map[y][x] == 'N')
+		ft_init_draws(v, x, y, 'N');
+}
+
 void	ft_draw_map(t_v *v)
 {
 	int	x;
@@ -94,10 +107,7 @@ void	ft_draw_map(t_v *v)
 				ft_init_draws(v, x, y, '0');
 			if (v->m.map[y][x] == 'C')
 				ft_init_draws(v, x, y, 'C');
-			if (v->m.map[y][x] == 'E')
-				ft_init_draws(v, x, y, 'E');
-			if (v->m.map[y][x] == 'N')
-				ft_init_draws(v, x, y, 'N');
+			ft_draw_map_part1(v, x, y);
 			x++;
 		}
 		y++;

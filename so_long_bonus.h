@@ -6,7 +6,7 @@
 /*   By: chillion <chillion@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/01 16:30:49 by chillion          #+#    #+#             */
-/*   Updated: 2022/10/04 15:21:24 by chillion         ###   ########.fr       */
+/*   Updated: 2022/10/05 16:27:32 by chillion         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ typedef struct s_data {
 	char	*ad;
 	int		pos;
 	int		addr_use;
+	int		free_status;
 	int		bpp;
 	int		llen;
 	int		en;
@@ -92,6 +93,10 @@ void			ft_exit_map(t_v *v, int i);
 void			ft_print_map(char **mptr);
 int				ft_close_event(t_v *v);
 
+/* so_long_close */
+void			ft_stop_part1(t_v *v);
+void			ft_stop_part2(t_v *v);
+
 /* so_long_color */
 void			ft_my_mlx_pixel_put(t_data *data, int x, int y, int color);
 unsigned int	ft_get_color(t_data *data, int x, int y);
@@ -144,6 +149,8 @@ void			ft_init_new_sprites(t_v *v);
 void			ft_switch_player_image(t_v *v, int x, int y);
 void			ft_switch_end_game(t_v *v, int x, int y);
 
+void			ft_init_new_sprites_part2(t_v *v);
+
 /* so_long_move_checker */
 int				ft_check_player_up(t_v *v);
 int				ft_check_player_down(t_v *v);
@@ -156,5 +163,18 @@ void			ft_init_sprites_part1(t_v *v);
 void			ft_init_sprites_part2(t_v *v);
 void			ft_init_data(t_v *v);
 
+void			ft_switch_bad_end_game(t_v *v, t_data sprite);
+void			ft_init_draws1(t_v *v, int x, int y, char c);
+void			ft_init_draws2(t_v *v, int x, int y, char c);
+void			ft_draw_refresh1(t_v *v);
+void			ft_draw_refresh2(t_v *v);
+
+void			str_menu_data(t_v *v);
+void			ft_anim_end_game(t_v *v, t_data sprite);
+void			ft_anim_part1(t_v *v);
+int				ft_anim(t_v *v);
+
+void			ft_init_big_cat(t_v *v);
+void			ft_switch_bad_end_game(t_v *v, t_data sprite);
 
 #endif

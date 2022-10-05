@@ -6,7 +6,7 @@
 #    By: chillion <chillion@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/09/01 12:07:22 by chillion          #+#    #+#              #
-#    Updated: 2022/10/04 15:32:56 by chillion         ###   ########.fr        #
+#    Updated: 2022/10/05 16:28:44 by chillion         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,6 +24,7 @@ OBJ_DIR := objects/
 AR := ar rc
 RM := rm
 VAL := valgrind --leak-check=full --track-origins=yes
+#VAL := valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes
 MLXFLAGS := -L libs/minilibx-linux/ -lmlx -lXext -lX11 -lz -lm
 
 BLACK = \033[1;30m
@@ -63,6 +64,8 @@ BONUS = so_long_bonus.c	\
 	so_long_map_init_bonus.c	\
 	so_long_move_checker_bonus.c	\
 	so_long_path_checker_bonus.c	\
+	so_long_anim_bonus.c	\
+	so_long_refresh_bonus.c	\
 
 LIBFT := libs/libft/libft.a
 MLX := libs/minilibx-linux/libmlx_Linux.a
@@ -123,6 +126,9 @@ ${SOFT_BONUS} :
 
 test : all
 	${VAL} ./${SOFT_NAME} "basic.ber"
+
+testb : bonus
+	${VAL} ./${SOFT_BONUS} "basic_bonus.ber"
 
 lldb :
 	${CC} -g3 ${SRCS} ${LIBFT} ${MLXFLAGS} -o ${SOFT_NAME}
