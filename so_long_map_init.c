@@ -6,7 +6,7 @@
 /*   By: chillion <chillion@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/01 18:21:46 by chillion          #+#    #+#             */
-/*   Updated: 2022/10/03 17:32:54 by chillion         ###   ########.fr       */
+/*   Updated: 2022/10/10 16:00:10 by chillion         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ int	ft_line_init_size(char *str)
 	int	i;
 
 	i = 0;
-	while (str[i])
+	while (str[i] && i < 255)
 		i++;
 	return (i);
 }
@@ -29,12 +29,19 @@ void	ft_fd_error(t_v *v)
 	exit(EXIT_FAILURE);
 }
 
+void	ft_str_error(t_v *v)
+{
+	ft_printf("Error\nEMPTY MAP\n");
+	free(v);
+	exit(EXIT_FAILURE);
+}
+
 int	ft_size_init_map(char *argv, t_v *v)
 {
-	int		fd;
-	int		i;
-	int		j;
-	char	*str;
+	int				fd;
+	long int		i;
+	int				j;
+	char			*str;
 
 	j = 0;
 	fd = open(argv, O_RDONLY);
@@ -42,6 +49,8 @@ int	ft_size_init_map(char *argv, t_v *v)
 		ft_fd_error(v);
 	i = 0;
 	str = get_next_line(fd);
+	if (!str)
+		ft_str_error(v);
 	while (str)
 	{
 		if (ft_line_init_size(str) > 54)
@@ -51,9 +60,9 @@ int	ft_size_init_map(char *argv, t_v *v)
 		i++;
 	}
 	fd = close(fd);
-	if (j == -1)
+	if (j == -1 || i > 2147483647)
 		i = -1;
-	return (i);
+	return ((int)i);
 }
 
 char	**ft_init_map(char *argv, t_v *v, int j)

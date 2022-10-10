@@ -6,7 +6,7 @@
 /*   By: chillion <chillion@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/01 18:11:11 by chillion          #+#    #+#             */
-/*   Updated: 2022/10/01 18:52:05 by chillion         ###   ########.fr       */
+/*   Updated: 2022/10/06 16:16:50 by chillion         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,22 +19,22 @@ int	ft_west_offensive(int x, int y, t_v *v)
 
 	tmpy = y;
 	tmpx = x;
-	while (v->m.map[tmpy][tmpx] != '1')
+	while (v->m.map[tmpy][tmpx] != '1' && v->m.map[tmpy][tmpx] != 'E')
 	{
-		if (v->m.map[tmpy][tmpx] == 'C'
-			|| v->m.map[tmpy][tmpx] == 'E')
+		if (v->m.map[tmpy][tmpx] == 'C')
 			v->m.itsf = v->m.itsf + 1;
-		if (v->m.map[tmpy - 1][tmpx] == 'C'
-			|| v->m.map[tmpy - 1][tmpx] == 'E')
+		if (v->m.map[tmpy - 1][tmpx] == 'C')
 			v->m.itsf = v->m.itsf + 1;
-		if (v->m.map[tmpy + 1][tmpx] == 'C'
-			|| v->m.map[tmpy + 1][tmpx] == 'E')
+		if (v->m.map[tmpy + 1][tmpx] == 'C')
 			v->m.itsf = v->m.itsf + 1;
-		if (v->m.map[tmpy][tmpx] != '1')
+		if (v->m.map[tmpy][tmpx] != '1'
+			&& v->m.map[tmpy][tmpx] != 'E')
 			v->m.map[tmpy][tmpx] = 'P';
-		if (v->m.map[tmpy - 1][tmpx] != '1')
+		if (v->m.map[tmpy - 1][tmpx] != '1'
+			&& v->m.map[tmpy - 1][tmpx] != 'E')
 			v->m.map[tmpy - 1][tmpx] = 'P';
-		if (v->m.map[tmpy + 1][tmpx] != '1')
+		if (v->m.map[tmpy + 1][tmpx] != '1'
+			&& v->m.map[tmpy + 1][tmpx] != 'E')
 			v->m.map[tmpy + 1][tmpx] = 'P';
 		tmpx--;
 	}
@@ -48,22 +48,22 @@ int	ft_north_offensive(int x, int y, t_v *v)
 
 	tmpy = y;
 	tmpx = x;
-	while (v->m.map[tmpy][tmpx] != '1')
+	while (v->m.map[tmpy][tmpx] != '1' && v->m.map[tmpy][tmpx] != 'E')
 	{
-		if (v->m.map[tmpy][tmpx] == 'C'
-			|| v->m.map[tmpy][tmpx] == 'E')
+		if (v->m.map[tmpy][tmpx] == 'C')
 			v->m.itsf = v->m.itsf + 1;
-		if (v->m.map[tmpy][tmpx - 1] == 'C'
-			|| v->m.map[tmpy][tmpx - 1] == 'E')
+		if (v->m.map[tmpy][tmpx - 1] == 'C')
 			v->m.itsf = v->m.itsf + 1;
-		if (v->m.map[tmpy][tmpx + 1] == 'C'
-			|| v->m.map[tmpy][tmpx + 1] == 'E')
+		if (v->m.map[tmpy][tmpx + 1] == 'C')
 			v->m.itsf = v->m.itsf + 1;
-		if (v->m.map[tmpy][tmpx] != '1')
+		if (v->m.map[tmpy][tmpx] != '1'
+			&& v->m.map[tmpy][tmpx] != 'E')
 			v->m.map[tmpy][tmpx] = 'P';
-		if (v->m.map[tmpy][tmpx - 1] != '1')
+		if (v->m.map[tmpy][tmpx - 1] != '1'
+			&& v->m.map[tmpy][tmpx - 1] != 'E')
 			v->m.map[tmpy][tmpx - 1] = 'P';
-		if (v->m.map[tmpy][tmpx + 1] != '1')
+		if (v->m.map[tmpy][tmpx + 1] != '1'
+			&& v->m.map[tmpy][tmpx + 1] != 'E')
 			v->m.map[tmpy][tmpx + 1] = 'P';
 		tmpy--;
 	}
@@ -77,22 +77,22 @@ int	ft_east_offensive(int x, int y, t_v *v)
 
 	tmpy = y;
 	tmpx = x;
-	while (v->m.map[tmpy][tmpx] != '1')
+	while (v->m.map[tmpy][tmpx] != '1' && v->m.map[tmpy][tmpx] != 'E')
 	{
-		if (v->m.map[tmpy][tmpx] == 'C'
-			|| v->m.map[tmpy][tmpx] == 'E')
+		if (v->m.map[tmpy][tmpx] == 'C')
 			v->m.itsf = v->m.itsf + 1;
-		if (v->m.map[tmpy - 1][tmpx] == 'C'
-			|| v->m.map[tmpy - 1][tmpx] == 'E')
+		if (v->m.map[tmpy - 1][tmpx] == 'C')
 			v->m.itsf = v->m.itsf + 1;
-		if (v->m.map[tmpy + 1][tmpx] == 'C'
-			|| v->m.map[tmpy + 1][tmpx] == 'E')
+		if (v->m.map[tmpy + 1][tmpx] == 'C')
 			v->m.itsf = v->m.itsf + 1;
-		if (v->m.map[tmpy][tmpx] != '1')
+		if (v->m.map[tmpy][tmpx] != '1'
+			&& v->m.map[tmpy][tmpx] != 'E')
 			v->m.map[tmpy][tmpx] = 'P';
-		if (v->m.map[tmpy - 1][tmpx] != '1')
+		if (v->m.map[tmpy - 1][tmpx] != '1'
+			&& v->m.map[tmpy - 1][tmpx] != 'E')
 			v->m.map[tmpy - 1][tmpx] = 'P';
-		if (v->m.map[tmpy + 1][tmpx] != '1')
+		if (v->m.map[tmpy + 1][tmpx] != '1'
+			&& v->m.map[tmpy + 1][tmpx] != 'E')
 			v->m.map[tmpy + 1][tmpx] = 'P';
 		tmpx++;
 	}
@@ -106,22 +106,22 @@ int	ft_south_offensive(int x, int y, t_v *v)
 
 	tmpy = y;
 	tmpx = x;
-	while (v->m.map[tmpy][tmpx] != '1')
+	while (v->m.map[tmpy][tmpx] != '1' && v->m.map[tmpy][tmpx] != 'E')
 	{
-		if (v->m.map[tmpy][tmpx] == 'C'
-			|| v->m.map[tmpy][tmpx] == 'E')
+		if (v->m.map[tmpy][tmpx] == 'C')
 			v->m.itsf = v->m.itsf + 1;
-		if (v->m.map[tmpy][tmpx - 1] == 'C'
-			|| v->m.map[tmpy][tmpx - 1] == 'E')
+		if (v->m.map[tmpy][tmpx - 1] == 'C')
 			v->m.itsf = v->m.itsf + 1;
-		if (v->m.map[tmpy][tmpx + 1] == 'C'
-			|| v->m.map[tmpy][tmpx + 1] == 'E')
+		if (v->m.map[tmpy][tmpx + 1] == 'C')
 			v->m.itsf = v->m.itsf + 1;
-		if (v->m.map[tmpy][tmpx] != '1')
+		if (v->m.map[tmpy][tmpx] != '1'
+			&& v->m.map[tmpy][tmpx] != 'E')
 			v->m.map[tmpy][tmpx] = 'P';
-		if (v->m.map[tmpy][tmpx - 1] != '1')
+		if (v->m.map[tmpy][tmpx - 1] != '1'
+			&& v->m.map[tmpy][tmpx - 1] != 'E')
 			v->m.map[tmpy][tmpx - 1] = 'P';
-		if (v->m.map[tmpy][tmpx + 1] != '1')
+		if (v->m.map[tmpy][tmpx + 1] != '1'
+			&& v->m.map[tmpy][tmpx + 1] != 'E')
 			v->m.map[tmpy][tmpx + 1] = 'P';
 		tmpy++;
 	}

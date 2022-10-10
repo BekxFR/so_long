@@ -6,11 +6,11 @@
 #    By: chillion <chillion@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/09/01 12:07:22 by chillion          #+#    #+#              #
-#    Updated: 2022/10/05 16:28:44 by chillion         ###   ########.fr        #
+#    Updated: 2022/10/06 17:06:28 by chillion         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-.PHONY : all test lldb bonus norm clean fclean re
+.PHONY : all test testb lldb lldbb bonus norm clean fclean re
 
 NAME := so_long.a
 NAME_BONUS := so_long_bonus.a
@@ -24,7 +24,6 @@ OBJ_DIR := objects/
 AR := ar rc
 RM := rm
 VAL := valgrind --leak-check=full --track-origins=yes
-#VAL := valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes
 MLXFLAGS := -L libs/minilibx-linux/ -lmlx -lXext -lX11 -lz -lm
 
 BLACK = \033[1;30m
@@ -50,8 +49,6 @@ SRCS = so_long.c	\
 	so_long_move_checker.c	\
 	so_long_path_checker.c	\
 
-#SRCS = ${wildcard *.c}
-
 BONUS = so_long_bonus.c	\
 	so_long_attack_bonus.c	\
 	so_long_close_bonus.c	\
@@ -66,6 +63,8 @@ BONUS = so_long_bonus.c	\
 	so_long_path_checker_bonus.c	\
 	so_long_anim_bonus.c	\
 	so_long_refresh_bonus.c	\
+	so_long_close_part_bonus.c	\
+	so_long_init_data_part_bonus.c	\
 
 LIBFT := libs/libft/libft.a
 MLX := libs/minilibx-linux/libmlx_Linux.a
@@ -89,9 +88,6 @@ ${LIBFT} :
 	cp ${LIBFT} ${NAME}
 
 ${NAME} : ${OBJ}
-# 	/*** TEMPORAIRE ***/
-#	${RM} -f ${SOFT_NAME} 
-# 	/*** TEMPORAIRE ***/
 	@echo "${BLUE}###${NC}Update de l'archive ${NAME}${BLUE}###${MAGENTA}"
 	${AR} ${NAME} ${MLX} ${OBJ}
 	@echo "${NC}"
@@ -112,9 +108,6 @@ $(OBJF) :
 bonus : ${LIBFT} ${BOBJ} ${NAME_BONUS} ${SOFT_BONUS}
 
 ${NAME_BONUS} : ${BOBJ}
-# 	/*** TEMPORAIRE ***/
-	${RM} -f ${SOFT_BONUS} 
-# 	/*** TEMPORAIRE ***/
 	@echo "${BLUE}###${NC}Update de l'archive ${NAME_BONUS}${BLUE}###${MAGENTA}"
 	${AR} ${NAME_BONUS} ${MLX} ${BOBJ}
 	@echo "${NC}"

@@ -6,7 +6,7 @@
 /*   By: chillion <chillion@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/01 18:31:59 by chillion          #+#    #+#             */
-/*   Updated: 2022/10/05 16:55:15 by chillion         ###   ########.fr       */
+/*   Updated: 2022/10/06 17:17:35 by chillion         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,4 +56,21 @@ int	ft_control_its(t_v *v)
 		ft_printf("%d, Exit = %d, Collectable = %d\n", player, exit, conso);
 	}
 	return (0);
+}
+
+int	ft_invasion_propagation(int x, int y, t_v *v)
+{
+	ft_west_offensive(x, y, v);
+	if (v->m.itsf == v->m.its)
+		return (v->m.itsf);
+	ft_north_offensive(x, y, v);
+	if (v->m.itsf == v->m.its)
+		return (v->m.its);
+	ft_east_offensive(x, y, v);
+	if (v->m.itsf == v->m.its)
+		return (v->m.its);
+	ft_south_offensive(x, y, v);
+	if (v->m.itsf == v->m.its)
+		return (v->m.its);
+	return (v->m.itsf);
 }

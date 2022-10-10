@@ -6,7 +6,7 @@
 /*   By: chillion <chillion@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/01 18:41:03 by chillion          #+#    #+#             */
-/*   Updated: 2022/10/05 16:37:28 by chillion         ###   ########.fr       */
+/*   Updated: 2022/10/10 14:57:25 by chillion         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,118 @@ void	ft_draw_player(t_v *v, int key)
 	{
 		ft_switch_bad_end_game(v, v->n1);
 		mlx_put_image_to_window(v->mlx, v->win, v->ig.img, 0, 0);
+	}
+}
+
+void	ft_init_ennemy(t_v *v)
+{
+	int	x;
+	int	y;
+
+	y = 1;
+	while (y < v->m.w - 1)
+	{
+		x = 1;
+		while (x < v->m.h - 1)
+		{
+			if (v->m.map[y][x] == '0')
+			{
+			if (v->m.map[y][x + 1] == '1'
+				&& v->m.map[y][x - 1] == '0'
+				&& v->m.map[y + 1][x] == '1'
+				&& v->m.map[y - 1][x] == '0'
+				&& v->m.map[y - 1][x - 1] == '0')
+				v->m.map[y][x] = 'N';
+			}
+			if (v->m.map[y][x] == '0')
+			{
+			if (v->m.map[y][x + 1] == '1'
+				&& v->m.map[y][x - 1] == '0'
+				&& v->m.map[y + 1][x] == '0'
+				&& v->m.map[y - 1][x] == '0'
+				&& v->m.map[y - 1][x - 1] == '0'
+				&& v->m.map[y - 1][x + 1] == '1'
+				&& v->m.map[y + 1][x - 1] == '0' 
+				&& v->m.map[y + 1][x + 1] == '1')
+				v->m.map[y][x] = 'N';
+			}
+			if (v->m.map[y][x] == '0')
+			{
+			if (v->m.map[y][x + 1] == '0'
+				&& v->m.map[y][x - 1] == '0'
+				&& v->m.map[y + 1][x] == '0'
+				&& v->m.map[y - 1][x] == '0'
+				&& v->m.map[y - 1][x - 1] == '0'
+				&& v->m.map[y - 1][x + 1] == '0'
+				&& v->m.map[y + 1][x - 1] == '0' 
+				&& v->m.map[y + 1][x + 1] == '0')
+				v->m.map[y][x] = 'N';
+			}
+			if (v->m.map[y][x] == '0')
+			{
+			if (v->m.map[y][x + 1] == '0'
+				&& v->m.map[y][x - 1] == '1'
+				&& v->m.map[y + 1][x] == '0'
+				&& v->m.map[y - 1][x] == '1'
+				&& v->m.map[y + 1][x + 1] == '0')
+				v->m.map[y][x] = 'N';
+			}
+			if (v->m.map[y][x] == '0')
+			{
+			if (v->m.map[y][x + 1] == '0'
+				&& v->m.map[y][x - 1] == '0'
+				&& v->m.map[y + 1][x] == '0'
+				&& v->m.map[y - 1][x] == '1'
+				&& v->m.map[y - 1][x - 1] == '1'
+				&& v->m.map[y - 1][x + 1] == '1'
+				&& v->m.map[y + 1][x - 1] == '0' 
+				&& v->m.map[y + 1][x + 1] == '0')
+				v->m.map[y][x] = 'N';
+			}
+			if (v->m.map[y][x] == '0')
+			{
+			if (v->m.map[y][x + 1] == '0'
+				&& v->m.map[y][x - 1] == '0'
+				&& v->m.map[y + 1][x] == '1'
+				&& v->m.map[y - 1][x] == '0'
+				&& v->m.map[y - 1][x - 1] == '0'
+				&& v->m.map[y - 1][x + 1] == '0'
+				&& v->m.map[y + 1][x - 1] == '1' 
+				&& v->m.map[y + 1][x + 1] == '1')
+				v->m.map[y][x] = 'N';
+			}
+			if (v->m.map[y][x] == '0')
+			{
+			if (v->m.map[y][x + 1] == '1'
+				&& v->m.map[y][x - 1] == '0'
+				&& v->m.map[y + 1][x] == '0'
+				&& v->m.map[y - 1][x] == '1'
+				&& v->m.map[y + 1][x - 1] == '0')
+				v->m.map[y][x] = 'N';
+			}
+			if (v->m.map[y][x] == '0')
+			{
+			if (v->m.map[y][x + 1] == '0'
+				&& v->m.map[y][x - 1] == '1'
+				&& v->m.map[y + 1][x] == '0'
+				&& v->m.map[y - 1][x] == '0'
+				&& v->m.map[y - 1][x - 1] == '1'
+				&& v->m.map[y - 1][x + 1] == '0'
+				&& v->m.map[y + 1][x - 1] == '1' 
+				&& v->m.map[y + 1][x + 1] == '0')
+				v->m.map[y][x] = 'N';
+			}
+			if (v->m.map[y][x] == '0')
+			{
+			if (v->m.map[y][x + 1] == '0' && v->m.map[y][x - 1] == '1'
+				&& v->m.map[y + 1][x] == '1' && v->m.map[y - 1][x] == '1'
+					&& v->m.map[y - 1][x - 1] == '1' && v->m.map[y - 1][x + 1] == '1'
+						&& v->m.map[y + 1][x - 1] == '1' && v->m.map[y + 1][x + 1] == '1')
+						v->m.map[y][x] = 'N';
+			}
+			x++;
+		}
+		y++;
 	}
 }
 
@@ -108,26 +220,6 @@ void	ft_draw_map(t_v *v)
 			if (v->m.map[y][x] == 'C')
 				ft_init_draws(v, x, y, 'C');
 			ft_draw_map_part1(v, x, y);
-			x++;
-		}
-		y++;
-	}
-	mlx_put_image_to_window(v->mlx, v->win, v->ig.img, 0, 0);
-}
-
-void	ft_draw_map_new(t_v *v)
-{
-	int	x;
-	int	y;
-
-	y = 0;
-	while (v->m.map[y])
-	{
-		x = 0;
-		while (v->m.map[y][x])
-		{
-			if (v->m.map[y][x] == '1')
-				ft_init_draw_sprite(v, v->wa, x, y);
 			x++;
 		}
 		y++;

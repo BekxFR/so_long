@@ -6,7 +6,7 @@
 /*   By: chillion <chillion@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/09 10:56:42 by chillion          #+#    #+#             */
-/*   Updated: 2022/10/01 18:43:11 by chillion         ###   ########.fr       */
+/*   Updated: 2022/10/10 17:31:45 by chillion         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,31 @@ int	ft_parsing_map(char *argv, t_v *v)
 	return (i);
 }
 
+void	ft_argv_check(char *argv, t_v *v)
+{
+	int	i;
+
+	i = 0;
+	if (!argv)
+		return ;
+	while (argv[i])
+		i++;
+	if (i < 5)
+	{
+			ft_printf("Error\nMAP IS NOT .BER\n");
+			free(v);
+			exit(EXIT_FAILURE);
+	}
+	i = i - 4;
+	if (argv[i] == '.'  && argv[i + 1] != 'b' && argv[i + 2] != 'e'
+		&& argv[i + 3] != 'r' && argv[i + 4] != '\0')
+	{
+		ft_printf("Error\nMAP IS NOT .BER\n");
+		free(v);
+		exit(EXIT_FAILURE);
+	}
+}
+
 int	main(int argc, char **argv)
 {
 	t_v		*v;
@@ -69,6 +94,7 @@ int	main(int argc, char **argv)
 		v = (t_v *)malloc(sizeof(t_v));
 		if (!v)
 			return (0);
+		ft_argv_check(argv[1], v);
 		ft_parsing_map(argv[1], v);
 		ft_init_window(argv[1], v);
 		ft_clean_map(v, 0);

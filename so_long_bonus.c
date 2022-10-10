@@ -6,7 +6,7 @@
 /*   By: chillion <chillion@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/09 10:56:42 by chillion          #+#    #+#             */
-/*   Updated: 2022/10/05 16:34:37 by chillion         ###   ########.fr       */
+/*   Updated: 2022/10/10 17:58:41 by chillion         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,7 @@ void	ft_init_window(char *argv, t_v *v)
 	v->ig.ad = mlx_get_data_addr(v->ig.img, &v->ig.bpp, &v->ig.llen, &v->ig.en);
 	mlx_hook(v->win, 2, 1L << 0, ft_keypress_event, v);
 	mlx_hook(v->win, 17, 1L << 17, ft_close_event, v);
+	ft_init_ennemy(v);
 	ft_init_data(v);
 	ft_draw_map(v);
 	mlx_loop_hook(v->mlx, ft_anim, v);
@@ -95,6 +96,31 @@ int	ft_parsing_map(char *argv, t_v *v)
 	return (i);
 }
 
+void	ft_argv_check(char *argv, t_v *v)
+{
+	int	i;
+
+	i = 0;
+	if (!argv)
+		return ;
+	while (argv[i])
+		i++;
+	if (i < 4)
+	{
+			ft_printf("Error\nMAP IS NOT .BER\n");
+			free(v);
+			exit(EXIT_FAILURE);
+	}
+	i = i - 4;
+	if (argv[i] != '.'  || argv[i + 1] != 'b' || argv[i + 2] != 'e'
+		|| argv[i + 3] != 'r')
+	{
+		ft_printf("Error\nMAP IS NOT .BER\n");
+		free(v);
+		exit(EXIT_FAILURE);
+	}
+}
+
 int	main(int argc, char **argv)
 {
 	t_v		*v;
@@ -104,6 +130,7 @@ int	main(int argc, char **argv)
 		v = (t_v *)malloc(sizeof(t_v));
 		if (!v)
 			return (0);
+		ft_argv_check(argv[1], v);
 		ft_parsing_map(argv[1], v);
 		ft_init_window(argv[1], v);
 		ft_clean_map(v, 0);

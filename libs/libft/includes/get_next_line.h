@@ -6,7 +6,7 @@
 /*   By: chillion <chillion@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/08 11:02:38 by chillion          #+#    #+#             */
-/*   Updated: 2022/09/16 14:52:49 by chillion         ###   ########.fr       */
+/*   Updated: 2022/10/05 18:13:56 by chillion         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 # include <stdlib.h>
 # include "libft.h"
 
-#define BUFFER_SIZE 100
+# define BUFFER_SIZE 100
 
 char	*get_next_line(int fd);
 char	*rest_line(char *str);

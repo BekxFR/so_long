@@ -99,5 +99,4 @@ void		*ft_zalloc(size_t nmemb, size_t size);
 void		ft_free(char **str);
 void		ft_trio_free(char **str, char **str2, char **str3);
 
-
 #endif

@@ -6,7 +6,7 @@
 /*   By: chillion <chillion@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/01 16:30:49 by chillion          #+#    #+#             */
-/*   Updated: 2022/10/05 16:27:32 by chillion         ###   ########.fr       */
+/*   Updated: 2022/10/10 11:26:20 by chillion         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,6 @@ typedef struct s_vars
 	t_map	m;
 }	t_v;
 
-
 /* so_long_close */
 void			ft_stop_all(t_v *v);
 void			ft_clean_map(t_v *v, int i);
@@ -111,7 +110,6 @@ void			ft_fd_error(t_v *v);
 int				ft_size_init_map(char *argv, t_v *v);
 char			**ft_init_map(char *argv, t_v *v, int j);
 
-
 /* so_long_attack */
 int				ft_west_offensive(int x, int y, t_v *v);
 int				ft_north_offensive(int x, int y, t_v *v);
@@ -123,6 +121,7 @@ int				ft_invasion_propagation(int x, int y, t_v *v);
 int				ft_invasion_checker_condition(t_v *v, int x, int y);
 int				ft_invasion_checker(t_v *v);
 void			ft_invasion_loop_checker(t_v *v, int x, int y);
+int				ft_check_exit(t_v *v);
 int				ft_invasion_loop(t_v *v);
 
 /* so_long_map_checker */
@@ -161,6 +160,9 @@ int				ft_check_player_left(t_v *v);
 int				ft_keypress_event(int key, t_v *v);
 void			ft_init_sprites_part1(t_v *v);
 void			ft_init_sprites_part2(t_v *v);
+void			ft_init_sprites_part3(t_v *v);
+void			ft_init_sprites_part4(t_v *v);
+void			ft_init_sprites_part5(t_v *v);
 void			ft_init_data(t_v *v);
 
 void			ft_switch_bad_end_game(t_v *v, t_data sprite);
@@ -176,5 +178,7 @@ int				ft_anim(t_v *v);
 
 void			ft_init_big_cat(t_v *v);
 void			ft_switch_bad_end_game(t_v *v, t_data sprite);
+int				ft_offensive_ally(int tmpx, int tmpy, t_v *v);
+void			ft_init_ennemy(t_v *v);
 
 #endif
